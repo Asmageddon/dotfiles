@@ -1,0 +1,39 @@
+source ~/.shvars
+
+if [[ ! -n $TEXT_USERNAME ]] ; then
+	NO_SET_PROMPT="yeah"
+		source .promptrc
+	NO_SET_PROMPT=""
+fi
+
+if [[ -n $TITLEBAR_SUPPORT ]] ; then
+	if [ -n "$SSH_CONNECTION" ] ; then
+		#Remote login, display all
+		SET_TERMINAL_TITLE="\e]0;$TEXT_USERNAME$TEXT_AT$TEXT_HOSTNAME: $TEXT_WORKING_DIRECTORY\a"
+	else
+		if [[ -n $ORIGINAL_USER ]] ; then
+			#User that opened the terminal, logged in locally, only display directory
+			SET_TERMINAL_TITLE="\e]0;$TEXT_WORKING_DIRECTORY\a"
+		else
+			#Different user, localhost - display username and directory
+			SET_TERMINAL_TITLE="\e]0;$TEXT_USERNAME: $TEXT_WORKING_DIRECTORY\a"
+		fi
+	fi
+
+	#IMPORTANT: $PS1 __MUST__ be placed after that command because escape sequences on last line of multiline prompt weird it out
+	PS1="$(echo $SET_TERMINAL_TITLE)$PS1"
+
+	ORIG_TITLE="Program: ";
+
+	if [[ $TERM_CHECK == "zsh" ]] ; then
+		preexec() {
+			TITLE=$ORIG_TITLE$1;
+			print -Pn "\e]0;$TITLE\a";
+		}
+	elif [[ $TERM_CHECK == "bash" ]] ; then
+		set -o functrace;
+		#Bash is a bit of dinosaur therefore the same way of doing this as in zsh/tcsh won't work :/
+		trap 'echo -ne "\e]0;$ORIG_TITLE$BASH_COMMAND\a"' DEBUG;
+	fi
+	#postcmd() shall be used for tcsh, but it appears to have completely different syntax
+fi

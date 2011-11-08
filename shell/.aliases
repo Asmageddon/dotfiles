@@ -1,0 +1,14 @@
+source ~/.shvars
+
+alias grep='grep --color=auto'
+alias ls='ls -h --color=force'
+if [[ $TERM_CHECK == "zsh" ]] ; then
+	alias lsd='ls -d *(/)'
+	alias lsf='ls -d *(^/)'
+fi
+#Let's leave dir raw
+alias ping='ping -c 5'
+alias cat='less'
+alias rm='rm -I'
+alias x='exit'
+alias ssh='ssh -CX'

@@ -1,0 +1,110 @@
+mkcd() {
+	mkdir -p "$1" && cd "$1";
+}
+
+title() {
+	print -Pn "\e]0;$*\a";
+}
+
+###
+##Package management functions follow
+###
+
+#Install a package
+i() {
+	local COMMAND=""
+	if [[ $(which apt-get | wc -l) == "1" ]]; then
+		COMMAND="apt-get install "
+	else
+		echo "No package manager I know installed, exiting"
+		return 0
+	fi
+	if [[ "$UID" != 0 ]]; then
+		if [[ $(which sudo | wc -l) == "1" ]]; then
+			COMMAND="sudo "$COMMAND;
+		elif [[ $(which su | wc -l) == "1" ]]; then
+			echo "You don't have sudo installed, using su; Type root password to continue";
+			COMMAND="su -c \""$COMMAND:"\"";
+		else
+			echo "Error, no su or sudo present, don't know what to do";
+		fi
+	fi
+	COMMAND=$COMMAND$*
+	eval $COMMAND
+}
+
+#Uninstall a package
+ui() {
+	local COMMAND=""
+	if [[ $(which apt-get | wc -l) == "1" ]]; then
+		COMMAND="apt-get remove "
+	else
+		echo "No package manager I know installed, exiting"
+		return 0
+	fi
+	if [ "$UID" != 0 ]; then
+		if [[ $(which sudo | wc -l) == "1" ]]; then
+			COMMAND="sudo "$COMMAND;
+		elif [[ $(which su | wc -l) == "1" ]]; then
+			echo "You don't have sudo installed, using su; Type root password to continue";
+			COMMAND="su -c \""$COMMAND:"\"";
+		else
+			echo "Error, no su or sudo present, don't know what to do";
+		fi
+	fi
+	COMMAND=$COMMAND$*
+	eval $COMMAND
+}
+
+#Find a package
+fp() {
+	local COMMAND=""
+	if [[ $(which apt-cache | wc -l) == "1" ]]; then
+		COMMAND="apt-cache search "
+	else
+		echo "No package manager I know installed, exiting"
+		return 0
+	fi
+	COMMAND=$COMMAND$*
+	eval $COMMAND
+}
+
+#Launch torrents :3
+t() {
+	if [ "$(ps -ef | grep -c deluged)" = 1 ]; then
+		deluged;
+	fi
+	deluge-console;
+}
+
+#View a website in links2
+glinks() {
+	local COMMAND="links2"
+	if [[ $DISPLAY != "" ]] ; then
+		COMMAND="$COMMAND -g"
+	fi
+	if [[ $* == "" ]] ; then
+		COMMAND="$COMMAND 'www.google.com'"
+	else
+		COMMAND="$COMMAND '$*'"
+	fi
+	eval $COMMAND"&"
+}
+#Or directly google something
+google() {
+	local TARGET='http://www.google.com/search?q='$*;
+	glinks $TARGET;
+}
+
+#NOTE to self: Rewrite this to use sqlite3, perhaps as an external Python app
+MEMOFILE=~/.memo
+memo() {
+	local MEMO=""
+	if [[ "$*" == "read" ]] ; then
+		eval "less $MEMOFILE";
+	else
+		MEMO=$(echo -e $(date "+[%d/%m/%y]: %k:%M")"\n  "$*);
+		echo $MEMO;
+		echo $MEMO >> $MEMOFILE;
+	fi
+}

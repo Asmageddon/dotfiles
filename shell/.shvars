@@ -1,0 +1,94 @@
+TERM_CHECK="$(ps -p $$ | awk '!/PID/ {print $4}')"
+#
+##
+###Track the user that originally opened the shell so we can then test if it's the same as current one
+if [[ ! -n $ORIGINAL_USERNAME ]] ; then
+	ORIGINAL_USERNAME="$USERNAME";
+	export ORIGINAL_USERNAME;
+fi
+
+if [[ $ORIGINAL_USERNAME == $USERNAME ]] ; then
+	ORIGINAL_USER="TRUE";
+else
+	ORIGINAL_USER="";
+fi
+###
+##
+#
+##################
+#
+##
+###Track what was the original term used so we can check for titlebar/unicode support
+if [[ ! -n $ORIGINAL_TERM ]] ; then
+	ORIGINAL_TERM="$TERM";
+	export ORIGINAL_TERM;
+fi
+###
+##
+#
+
+#Set variables for dynamic retrieval of user/host name and current directory(only works in prompts and in print -P)
+if [[ $TERM_CHECK == "bash" ]] ; then
+	TEXT_USERNAME='\u'
+	TEXT_HOSTNAME='\h'
+	TEXT_WORKING_DIRECTORY='\w'
+elif [[ $TERM_CHECK == "zsh" ]] ; then
+	TEXT_USERNAME='%n'
+	TEXT_HOSTNAME='%M'
+	TEXT_WORKING_DIRECTORY='%~'
+fi
+
+##Guess if terminal supports unicode:
+if [[ -n $LC_ALL ]] ; then
+	UNICODE_SUPPORT="TRUE"
+fi
+
+
+
+###
+##Test(or rather (try to)guess) if terminal supports color
+###
+if   [[ $TERM == *xterm* ]] ; then
+	#The xterm family, most terminals fall under this category
+	#xterm, xterm-256color, xterm-color, xterm-debian, color-xterm
+	COLOR_SUPPORT="TRUE"
+elif [[ $TERM == rxvt* ]] ; then
+	#The rxvt family
+	#rxvt, rxvt-cygwin, rxvt-cygwin-native, rxvt-unicode, rxvt-256color
+	COLOR_SUPPORT="TRUE"
+elif [[ $TERM == screen* ]] ; then
+	#Screen(s), tmux also says he's a screen
+	#screen, screen-bce, screen-w, screen.linux
+	COLOR_SUPPORT="TRUE"
+elif [[ $TERM == con132* ]] ; then
+	#No idea what these are, to be honest I just pulled this list from the internet
+	#con132x25, con132x30, con132x43, con132x60
+	COLOR_SUPPORT="TRUE"
+elif [[ $TERM == con80* ]] ; then
+	#con80x25, con80x28, con80x30, con80x43, con80x50, con80x60
+	COLOR_SUPPORT="TRUE"
+else
+	#Everything else that supposedly supports color
+	for other in ansi cons25 console cygwin dtterm Eterm gnome konsole kterm linux linux-c mach-color putty vt100; do
+		if [[ $TERM == $other ]] ; then
+			COLOR_SUPPORT="TRUE"
+		fi
+	done
+fi
+
+
+
+###
+##Try to guess if terminal has titlebar support:
+###
+if   [[ $TERM == screen* ]] ; then
+	#Screen and derivatives all support titlebar title setting
+	TITLEBAR_SUPPORT="TRUE"
+else
+	#In other cases, judge by the original term
+	if [[ $ORIGINAL_TERM == *xterm* ]] ; then
+		TITLEBAR_SUPPORT="TRUE"
+	elif [[ $ORIGINAL_TERM == rxvt* ]] ; then
+		TITLEBAR_SUPPORT="TRUE"
+	fi
+fi
