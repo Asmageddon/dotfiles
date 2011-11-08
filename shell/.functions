@@ -88,11 +88,20 @@ glinks() {
 	else
 		COMMAND="$COMMAND '$*'"
 	fi
-	eval $COMMAND"&"
+	if [[ $DISPLAY != "" ]] ; then
+		COMMAND="$COMMAND &"
+	fi
+	eval $COMMAND
 }
 #Or directly google something
 google() {
 	local TARGET='http://www.google.com/search?q='$*;
+	glinks $TARGET;
+}
+
+#Or wiki it
+wiki() {
+	local TARGET='http://en.wikipedia.org/wiki/Special:Search?search='$*;
 	glinks $TARGET;
 }
 
