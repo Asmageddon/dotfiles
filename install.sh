@@ -14,7 +14,7 @@ for file in $shell_files ; do
 	eval $COMMAND
 done
 
-other_files="/tmux.conf .conkyrc"
+other_files=".tmux.conf .conkyrc"
 for file in $other_files ; do
 	COMMAND="ln -s $PWD/$file $installation_dir/$file"
 	echo "Creating a symlink from $file to $installation_dir/$file"
