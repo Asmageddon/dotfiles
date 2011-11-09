@@ -1,4 +1,8 @@
-source ~/.shvars
+
+if [[ ! -n $TERM_CHECK ]] ; then
+	source ~/.shvars
+fi
+
 #Pull $TEXT_USERNAME, $TEXT_HOSTNAME and $TEXT_WORKING_DIRECTORY (and everything else along the way :3)
 
 if [[ -n $COLOR_SUPPORT ]] ; then

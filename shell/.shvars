@@ -1,4 +1,8 @@
 TERM_CHECK="$(ps -p $$ | awk '!/PID/ {print $4}')"
+
+if [[ ! -n $HOSTNAME ]] ; then
+	HOSTNAME=$HOST;
+fi
 #
 ##
 ###Track the user that originally opened the shell so we can then test if it's the same as current one
@@ -91,4 +95,46 @@ else
 	elif [[ $ORIGINAL_TERM == rxvt* ]] ; then
 		TITLEBAR_SUPPORT="TRUE"
 	fi
+fi
+
+###
+##Set up $TERMSTACK
+###
+##Which displays stack of shells like this:
+#1 [user@hostname] using bash in xterm
+#2 [user@hostname] using zsh in xterm
+#3 [user@hostname] using zsh in screen
+#4 [root@hostname] using zsh in screen
+###
+
+if [[ ! -n $COLOR_USERNAME ]] ; then
+	NO_SET_PROMPT="yeah"
+		source ~/.promptrc
+	NO_SET_PROMPT=""
+fi
+
+if [[ ! -n $TERMSTACKLVL ]] ; then
+	export TERMSTACKLVL=0;
+	#export TERMSTACK="$SHLVL: [$TERM]$TERM_CHECK"
+	export TERMSTACK="";
+fi
+
+if [[ $SHLVL > $TERMSTACKLVL ]] ; then
+	#echo derp;
+	export TERMSTACKLVL="$SHLVL";
+	if [[ $SHLVL > 1 ]] ; then
+		TERMSTACK="$TERMSTACK\n";
+	fi
+	export TERMSTACK="$TERMSTACK$SHLVL [$USERNAME@$HOSTNAME] using $TERM_CHECK in $TERM"
+	#TERMSTACK="$TERMSTACK\
+#$(echo $COLOR_DECORATION2)$TEXT_FRAME1\
+#$(echo $COLOR_USERNAME)$USERNAME\
+#$(echo $COLOR_DECORATION1)$TEXT_AT\
+#$(echo $COLOR_HOSTNAME)$HOSTNAME\
+#$(echo $COLOR_DECORATION2)$TEXT_FRAME2$\
+#$(echo $NC) using \
+#$(echo $COLOR_DECORATION1)$TERM_CHECK\
+#$(echo $NC) in \
+#$(echo $COLOR_DIRECTORY)$TERM$(echo $NC)"
+	#export TERMSTACK;
 fi
