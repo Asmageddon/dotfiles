@@ -12,3 +12,5 @@ alias cat='less'
 alias rm='rm -I'
 alias x='exit'
 alias ssh='ssh -CX'
+
+alias servedir='python -m SimpleHTTPServer 9321'
