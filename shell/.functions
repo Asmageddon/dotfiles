@@ -105,6 +105,20 @@ wiki() {
 	glinks $TARGET;
 }
 
+save_flash() {
+	if [[ $1 == "" ]] ; then
+		local SAVE_DIR="/home/$USERNAME/Downloads/flash"
+	else
+		local SAVE_DIR="$1"
+	fi
+	if [[ ! -d "$SAVE_DIR" ]] ; then
+		mkdir "$SAVE_DIR";
+	fi
+	lsof +L1 -anPT | grep FlashXX | awk -v save_dir=$SAVE_DIR ' {
+		print "cp -n /proc/" $2 "/fd/" substr($4, 1, length($4)-1) " " save_dir "/" substr($10, 13) ".flv"
+	}' | sh;
+}
+
 #NOTE to self: Rewrite this to use sqlite3, perhaps as an external Python app
 MEMOFILE=~/.memo
 memo() {
