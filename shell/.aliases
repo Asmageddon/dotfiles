@@ -1,7 +1,7 @@
 source ~/.shvars
 
 alias grep='grep --color=auto'
-alias ls='ls -h --color=force'
+alias ls='ls -Ah --color=force'
 if [[ $TERM_CHECK == "zsh" ]] ; then
 	alias lsd='ls -d *(/)'
 	alias lsf='ls -d *(^/)'
