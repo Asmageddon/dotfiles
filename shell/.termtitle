@@ -2,7 +2,7 @@ source ~/.shvars
 
 if [[ ! -n $TEXT_USERNAME ]] ; then
 	NO_SET_PROMPT="yeah"
-		source .promptrc
+		source ~/.promptrc
 	NO_SET_PROMPT=""
 fi
 

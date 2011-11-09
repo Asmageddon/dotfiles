@@ -1,7 +1,7 @@
 TERM_CHECK="$(ps -p $$ | awk '!/PID/ {print $4}')"
 
 if [[ ! -n $HOSTNAME ]] ; then
-	HOSTNAME=$HOST;
+	HOSTNAME=$HOST
 fi
 #
 ##
@@ -17,19 +17,12 @@ else
 	ORIGINAL_USER="";
 fi
 ###
-##
-#
-##################
-#
-##
-###Track what was the original term used so we can check for titlebar/unicode support
+##Track what was the original term used so we can check for titlebar/unicode support
+###
 if [[ ! -n $ORIGINAL_TERM ]] ; then
 	ORIGINAL_TERM="$TERM";
 	export ORIGINAL_TERM;
 fi
-###
-##
-#
 
 #Set variables for dynamic retrieval of user/host name and current directory(only works in prompts and in print -P)
 if [[ $TERM_CHECK == "bash" ]] ; then
@@ -46,7 +39,6 @@ fi
 if [[ -n $LC_ALL ]] ; then
 	UNICODE_SUPPORT="TRUE"
 fi
-
 
 
 ###
@@ -75,12 +67,10 @@ else
 	#Everything else that supposedly supports color
 	for other in ansi cons25 console cygwin dtterm Eterm gnome konsole kterm linux linux-c mach-color putty vt100; do
 		if [[ $TERM == $other ]] ; then
-			COLOR_SUPPORT="TRUE"
+			COLOR_SUPPORT="TRUE";
 		fi
 	done
 fi
-
-
 
 ###
 ##Try to guess if terminal has titlebar support:
@@ -107,34 +97,15 @@ fi
 #4 [root@hostname] using zsh in screen
 ###
 
-if [[ ! -n $COLOR_USERNAME ]] ; then
-	NO_SET_PROMPT="yeah"
-		source ~/.promptrc
-	NO_SET_PROMPT=""
-fi
-
 if [[ ! -n $TERMSTACKLVL ]] ; then
 	export TERMSTACKLVL=0;
-	#export TERMSTACK="$SHLVL: [$TERM]$TERM_CHECK"
 	export TERMSTACK="";
 fi
 
 if [[ $SHLVL > $TERMSTACKLVL ]] ; then
-	#echo derp;
 	export TERMSTACKLVL="$SHLVL";
 	if [[ $SHLVL > 1 ]] ; then
-		TERMSTACK="$TERMSTACK\n";
+		export TERMSTACK="$TERMSTACK\n";
 	fi
 	export TERMSTACK="$TERMSTACK$SHLVL [$USERNAME@$HOSTNAME] using $TERM_CHECK in $TERM"
-	#TERMSTACK="$TERMSTACK\
-#$(echo $COLOR_DECORATION2)$TEXT_FRAME1\
-#$(echo $COLOR_USERNAME)$USERNAME\
-#$(echo $COLOR_DECORATION1)$TEXT_AT\
-#$(echo $COLOR_HOSTNAME)$HOSTNAME\
-#$(echo $COLOR_DECORATION2)$TEXT_FRAME2$\
-#$(echo $NC) using \
-#$(echo $COLOR_DECORATION1)$TERM_CHECK\
-#$(echo $NC) in \
-#$(echo $COLOR_DIRECTORY)$TERM$(echo $NC)"
-	#export TERMSTACK;
 fi
