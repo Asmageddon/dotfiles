@@ -106,7 +106,7 @@ wiki() {
 }
 
 #I think this deserves "Hack of the century award"
-flash_safe() {
+flvsave() {
 	if [[ $1 == "" ]] ; then
 		local SAVE_DIR="/home/$USERNAME/Downloads/flash"
 	else
@@ -123,6 +123,7 @@ flash_safe() {
 			echo "Found $FLV_STREAM_COUNT flash videos being streamed:";
 		fi
 		eval $(lsof +L1 | grep FlashXX | awk '{ print "export " substr($10, 6) "=" $7 ";"; }') #Save video sizes into environment variables
+		sleep 2; #Wait a bit so they can load if they're still loading
 		echo "Videos still loading:"
 		lsof +L1 | grep FlashXX | awk 'ENVIRON[substr($10, 6)] != $7 {
 			print substr($10, 6) " " ENVIRON[substr($10, 6)] " " $7;
@@ -142,7 +143,7 @@ flash_safe() {
 	fi
 }
 
-flash() {
+flvsave_force() {
 	if [[ $1 == "" ]] ; then
 		local SAVE_DIR="/home/$USERNAME/Downloads/flash"
 	else
