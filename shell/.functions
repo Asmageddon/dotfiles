@@ -105,7 +105,8 @@ wiki() {
 	glinks $TARGET;
 }
 
-save_flash() {
+#I think this deserves "Hack of the century award"
+flash_safe() {
 	if [[ $1 == "" ]] ; then
 		local SAVE_DIR="/home/$USERNAME/Downloads/flash"
 	else
@@ -114,8 +115,44 @@ save_flash() {
 	if [[ ! -d "$SAVE_DIR" ]] ; then
 		mkdir "$SAVE_DIR";
 	fi
-	lsof +L1 -anPT | grep FlashXX | awk -v save_dir=$SAVE_DIR ' {
-		print "cp -n /proc/" $2 "/fd/" substr($4, 1, length($4)-1) " " save_dir "/" substr($10, 13) ".flv"
+	local FLV_STREAM_COUNT=$(lsof +L1 -anPT | grep FlashXX | wc -l);
+	if [[ $FLV_STREAM_COUNT > 0 ]] ; then
+		if [[ $FLV_STREAM_COUNT == 1 ]] ; then
+			echi "Found one open flash stream:";
+		else
+			echo "Found $FLV_STREAM_COUNT flash videos being streamed:";
+		fi
+		eval $(lsof +L1 | grep FlashXX | awk '{ print "export " substr($10, 6) "=" $7 ";"; }') #Save video sizes into environment variables
+		echo "Videos still loading:"
+		lsof +L1 | grep FlashXX | awk 'ENVIRON[substr($10, 6)] != $7 {
+			print substr($10, 6) " " ENVIRON[substr($10, 6)] " " $7;
+			print "  " $2 "/" $1 " " $10 " (" $7 / 1024 / 1024 " MiB+)";
+		}'
+		echo "Fully loaded videos:";
+		lsof +L1 | grep FlashXX | awk 'ENVIRON[substr($10, 6)] == $7 {
+			print "  " $2 "/" $1 " " $10 " (" $7 / 1024 / 1024 " MiB)";
+		}' #Check if video sizes are still the same
+		echo "Saving fully loaded videos to $SAVE_DIR";
+
+		lsof +L1 -anPT | grep FlashXX | awk -v save_dir=$SAVE_DIR 'ENVIRON[substr($10, 6)] == $7 {
+			print "cp -n /proc/" $2 "/fd/" substr($4, 1, length($4)-1) " " save_dir "/" substr($10, 13) ".flv";
+		}' | sh;
+
+		echo "Done";
+	fi
+}
+
+flash() {
+	if [[ $1 == "" ]] ; then
+		local SAVE_DIR="/home/$USERNAME/Downloads/flash"
+	else
+		local SAVE_DIR="$1"
+	fi
+	if [[ ! -d "$SAVE_DIR" ]] ; then
+		mkdir "$SAVE_DIR";
+	fi
+	lsof +L1 -anPT | grep FlashXX | awk -v save_dir=$SAVE_DIR '{
+		print "cp -n /proc/" $2 "/fd/" substr($4, 1, length($4)-1) " " save_dir "/" substr($10, 13) ".flv";
 	}' | sh;
 }
 
