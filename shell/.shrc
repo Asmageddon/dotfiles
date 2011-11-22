@@ -1,2 +1,6 @@
 source ~/.aliases
 source ~/.functions
+
+if [[ ! -n $TMUX ]] && [[ $SHLVL == 1 ]] ; then
+	exec tmux;
+fi
