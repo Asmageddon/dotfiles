@@ -118,7 +118,7 @@ flvsave() {
 	local FLV_STREAM_COUNT=$(lsof +L1 -anPT | grep FlashXX | wc -l);
 	if [[ $FLV_STREAM_COUNT > 0 ]] ; then
 		if [[ $FLV_STREAM_COUNT == 1 ]] ; then
-			echi "Found one open flash stream:";
+			echo "Found one open flash stream:";
 		else
 			echo "Found $FLV_STREAM_COUNT flash videos being streamed:";
 		fi
@@ -126,7 +126,6 @@ flvsave() {
 		sleep 2; #Wait a bit so they can load if they're still loading
 		echo "Videos still loading:"
 		lsof +L1 | grep FlashXX | awk 'ENVIRON[substr($10, 6)] != $7 {
-			print substr($10, 6) " " ENVIRON[substr($10, 6)] " " $7;
 			print "  " $2 "/" $1 " " $10 " (" $7 / 1024 / 1024 " MiB+)";
 		}'
 		echo "Fully loaded videos:";
@@ -141,20 +140,6 @@ flvsave() {
 
 		echo "Done";
 	fi
-}
-
-flvsave_force() {
-	if [[ $1 == "" ]] ; then
-		local SAVE_DIR="/home/$USERNAME/Downloads/flash"
-	else
-		local SAVE_DIR="$1"
-	fi
-	if [[ ! -d "$SAVE_DIR" ]] ; then
-		mkdir "$SAVE_DIR";
-	fi
-	lsof +L1 -anPT | grep FlashXX | awk -v save_dir=$SAVE_DIR '{
-		print "cp -n /proc/" $2 "/fd/" substr($4, 1, length($4)-1) " " save_dir "/" substr($10, 13) ".flv";
-	}' | sh;
 }
 
 #NOTE to self: Rewrite this to use sqlite3, perhaps as an external Python app
