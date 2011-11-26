@@ -1,6 +1,16 @@
 source ~/.aliases
 source ~/.functions
 
-if [[ ! -n $TMUX ]] && [[ $SHLVL == 1 ]] ; then
-	exec tmux;
+if [[ $SHLVL == 1 ]] && [[ $TERM != *screen* ]] ; then
+	COMMAND=""
+	if   [[ $(which tmux | wc -l) == "1" ]] ; then
+		COMMAND="tmux";
+	elif [[ $(which screen | wc -l) == "1" ]] ; then
+		COMMAND="screen";
+	fi
+	if [[ -n $SSH_CONNECTION ]] ; then
+		exec $COMMAND;
+	elif [[ $TERM == "linux" ]] ; then
+		exec $COMMAND;
+	fi
 fi
