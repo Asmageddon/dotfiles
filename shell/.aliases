@@ -13,4 +13,10 @@ alias rm='rm -I'
 alias x='exit'
 alias ssh='ssh -CX'
 
+alias yaourt='yaourt --noconfirm'
+alias yogurt='sudo yaourt --noconfirm'
+alias milkshake='yaourt -Ss'
+
+alias screenshot="scrot '%Y.%m.%d @ %H:%M:%S ($wx$h).png' -e 'nice -n 20 optipng "$f"; nice -n 20 mv "$f" ~/Obrazy/'"
+
 alias servedir='python -m SimpleHTTPServer 9321'
