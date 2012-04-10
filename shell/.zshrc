@@ -3,10 +3,15 @@ source ~/.promptrc
 source ~/.termtitle
 
 HISTFILE=~/.histfile
-HISTSIZE=3000
+HISTSIZE=500
 SAVEHIST=25000
 
-setopt appendhistory hist_ignore_all_dups extendedglob autocd
+setopt appendhistory hist_ignore_all_dups
+setopt extendedglob
+setopt autocd
+
+setopt ignorebraces
+
 unsetopt beep
 
 zstyle :compinstall filename '/home/asmageddon/.zshrc'
