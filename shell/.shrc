@@ -1,6 +1,8 @@
 source ~/.aliases
 source ~/.functions
 
+export EDITOR="nano"
+
 if [[ $SHLVL == 1 ]] && [[ $TERM != *screen* ]] ; then
 	COMMAND=""
 	if   [[ $(which tmux | wc -l) == "1" ]] ; then
