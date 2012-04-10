@@ -2,10 +2,6 @@ mkcd() {
 	mkdir -p "$1" && cd "$1";
 }
 
-title() {
-	print -Pn "\e]0;$*\a";
-}
-
 ###
 ##Package management functions follow
 ###
