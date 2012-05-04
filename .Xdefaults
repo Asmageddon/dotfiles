@@ -1,0 +1,31 @@
+!--< urxvt >--!
+    !--< urxvt:look >--!
+        urxvt.font:				xft:DejaVu Sans Mono-10:Book
+        urxvt.geometry:			120x32
+        urxvt.background:		black
+        urxvt.foreground:		white
+        urxvt.letterSpace:		0
+        urxvt.cursorBlink:		true
+        urxvt.scrollBar:		true
+        urxvt.scrollBar_right:	true
+        urxvt.scrollColor:		#8282B2
+        urxvt.scrollstyle:		plain
+        urxvt.colorUL:			6
+
+    !--< urxvt:behavior >--!
+        urxvt.secondaryScroll:	true
+        urxvt.pointerBlank:		true
+        urxvt.saveLines:		4000
+
+    urxvt.perl-ext-common:  default,vtwheel,matcher
+
+    !--< urxvt:url >--!
+        urxvt.matcher.button:   1
+        urxvt.urlLauncher:      opera-next
+
+!--< xterm >--!
+	xterm*background:       #000000
+	xterm*foreground:       #FFFFFF
+	xterm*colorBD:          #ffffff
+	xterm*cursorColor:      #ffffff
+

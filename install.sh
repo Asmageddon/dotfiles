@@ -14,7 +14,7 @@ for file in $shell_files ; do
 	eval $COMMAND
 done
 
-other_files=".tmux.conf .conkyrc"
+other_files=".tmux.conf .conkyrc .Xdefaults yaourtrc"
 for file in $other_files ; do
 	chmod +x $file
 	COMMAND="ln -s $PWD/$file $installation_dir/$file"
