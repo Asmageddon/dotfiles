@@ -1,13 +1,17 @@
 source ~/.aliases
 source ~/.functions
 
+if   [[ $(which most | awk '{print $2}') != "not" ]] ; then
+    export PAGER="most"
+fi
+
 export EDITOR="nano"
 
 if [[ $SHLVL == 1 ]] && [[ $TERM != *screen* ]] ; then
 	COMMAND=""
-	if   [[ $(which tmux | wc -l) == "1" ]] ; then
+	if   [[ $(which tmux | awk '{print $2}') != "not" ]] ; then
 		COMMAND="tmux";
-	elif [[ $(which screen | wc -l) == "1" ]] ; then
+	elif [[ $(which screen | awk '{print $2}') != "not" ]] ; then
 		COMMAND="screen";
 	fi
 	if [[ -n $SSH_CONNECTION ]] ; then
