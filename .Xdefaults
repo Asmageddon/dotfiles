@@ -16,6 +16,8 @@
         urxvt.secondaryScroll:	true
         urxvt.pointerBlank:		true
         urxvt.saveLines:		4000
+        urxvt.iso14755:         false
+        urxvt.iso14755_52:      false
 
     urxvt.perl-ext-common:  default,vtwheel,matcher
 
