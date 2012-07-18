@@ -67,10 +67,14 @@ fp() {
 
 #Launch torrents :3
 t() {
-	if [ "$(ps -ef | grep -c deluged)" = 1 ]; then
-		deluged;
+	if [[ -d "/media/You will die" ]] ; then
+		if [ "$(ps -ef | grep -c deluged)" = 1 ]; then
+			deluged;
+		fi
+		deluge-console;
+	else
+		echo "Your trololent drive is not mounted!"
 	fi
-	deluge-console;
 }
 
 #View a website in links2
@@ -149,4 +153,12 @@ memo() {
 		echo $MEMO;
 		echo $MEMO >> $MEMOFILE;
 	fi
+}
+
+ccat() {
+    src-hilite-lesspipe.sh $1;
+}
+
+cless() {
+    src-hilite-lesspipe.sh $1 | less -R;
 }

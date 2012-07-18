@@ -8,10 +8,11 @@ if [[ $TERM_CHECK == "zsh" ]] ; then
 fi
 #Let's leave dir raw
 alias ping='ping -c 5'
-alias cat='less'
 alias rm='rm -I'
 alias x='exit'
 alias ssh='ssh -CX'
+
+alias less='less -R'
 
 alias yaourt='yaourt --noconfirm'
 alias yogurt='sudo yaourt --noconfirm'
@@ -20,3 +21,5 @@ alias milkshake='yaourt -Ss'
 alias screenshot="scrot '%Y.%m.%d @ %H:%M:%S ($wx$h).png' -e 'nice -n 20 optipng "$f"; mv "$f" ~/Obrazy/'"
 
 alias servedir='python -m SimpleHTTPServer 9321'
+
+alias mplayer='mplayer -ass -embeddedfonts -ass-line-spacing 0 -vo xv -dr -sub-fuzziness 1 >/dev/null -framedrop'

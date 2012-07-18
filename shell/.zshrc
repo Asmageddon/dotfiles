@@ -6,7 +6,16 @@ HISTFILE=~/.histfile
 HISTSIZE=500
 SAVEHIST=25000
 
-setopt appendhistory hist_ignore_all_dups
+#Do not overwrite history file so two parallel shells
+# don't overwrite each other's history
+setopt appendhistory
+
+#Ignore duplicate lines
+setopt hist_ignore_all_dups
+#Expire duplicates before removing unique entries
+setopt hist_expire_dups_first
+
+
 setopt extendedglob
 setopt autocd
 
