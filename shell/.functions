@@ -162,3 +162,7 @@ ccat() {
 cless() {
     src-hilite-lesspipe.sh $1 | less -R;
 }
+
+zipdirs() {
+    ls -1 --color=never | awk '{print "zip -r \"" $0 ".zip\" \"" $0 "\""}' | sh
+}

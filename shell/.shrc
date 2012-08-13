@@ -14,7 +14,7 @@ if [[ $TERM != *screen* ]] ; then
 	elif [[ $(which screen | awk '{print $2}') != "not" ]] ; then
 		COMMAND="screen";
 	fi
-    echo $COMMAND;
+
 	if [[ -n $SSH_CONNECTION ]] ; then
 		exec $COMMAND;
 	elif [[ $TERM == "linux" ]] ; then

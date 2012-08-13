@@ -1,0 +1,28 @@
+#!/bin/bash
+
+#Get directory in which the script is located
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+#Get interface used to connect to the internet
+IF=$(bash "$DIR/internet_interface")
+
+#Calculate download speed during 1 second duration
+RXB=$(</sys/class/net/$IF/statistics/rx_bytes)
+
+#Since unlike zsh, bash doesn't support floating point numbers,
+# we can't just accept a delay parameter :/
+if [[ $1 == "approx" ]] ; then
+    sleep 0.5
+else
+    sleep 1
+fi
+
+RXBN=$(</sys/class/net/$IF/statistics/rx_bytes)
+RXDIF=$(echo $((RXBN - RXB)) )
+
+if [[ $1 == "approx" ]] ; then
+    echo -e "$((RXDIF / 1024 * 2))"
+else
+    echo -e "$((RXDIF / 1024))"
+fi
+#Unit is KiB

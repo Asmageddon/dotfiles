@@ -6,6 +6,8 @@ if [[ ! -n $TEXT_USERNAME ]] ; then
 	NO_SET_PROMPT=""
 fi
 
+
+
 if [[ -n $TITLEBAR_SUPPORT ]] ; then
 	if [ -n "$SSH_CONNECTION" ] ; then
 		#Remote login, display all
@@ -31,9 +33,8 @@ if [[ -n $TITLEBAR_SUPPORT ]] ; then
 			print -Pn "\e]0;$TITLE\a";
 		}
 	elif [[ $TERM_CHECK == "bash" ]] ; then
-		set -o functrace;
-		#Bash is a bit of dinosaur therefore the same way of doing this as in zsh/tcsh won't work :/
+        set -o functrace;
+        #For some reason this doesn't work on my system anymore...
 		trap 'echo -ne "\e]0;$ORIG_TITLE$BASH_COMMAND\a"' DEBUG;
 	fi
-	#postcmd() shall be used for tcsh, but it appears to have completely different syntax
 fi

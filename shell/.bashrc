@@ -20,4 +20,3 @@ shopt -s dotglob
 
 #Ignore lines prefied with '#' in interactive shell
 shopt -s interactive_comments
-shopt -s
