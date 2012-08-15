@@ -62,7 +62,7 @@ for file in $shell_files ; do
     TARGET="$installation_dir/$file";
     BACKUP="$installation_dir/.rcbackup";
 
-    symlink $SOURCE $TARGET $BACKUP;
+    symlink "$SOURCE" "$TARGET" "$BACKUP";
 
 done
 
@@ -72,7 +72,7 @@ for file in $other_files ; do
     TARGET="$installation_dir/$file";
     BACKUP="$installation_dir/.rcbackup";
 
-    symlink $SOURCE $TARGET $BACKUP;
+    symlink "$SOURCE" "$TARGET" "$BACKUP";
 
 done
 
@@ -86,6 +86,7 @@ for file in $script_files ; do
     TARGET="$installation_dir/$scripts_subdir/$file";
     BACKUP="$installation_dir/.rcbackup/$scripts_subdir";
 
-    symlink $SOURCE $TARGET $BACKUP;
+    chmod +x "$TARGET"
+    symlink "$SOURCE" "$TARGET" "$BACKUP";
 
 done
