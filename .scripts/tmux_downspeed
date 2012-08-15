@@ -1,0 +1,30 @@
+#!/bin/bash
+
+work_magics() {
+    #Get directory in which the script is located
+    DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+    #Get interface used to connect to the internet
+    IF=$(bash "$DIR/internet_interface")
+
+    #Calculate delta of downloaded bytes in 1 second duration
+    RXB=$(</sys/class/net/$IF/statistics/rx_bytes)
+    sleep 1
+    RXBN=$(</sys/class/net/$IF/statistics/rx_bytes)
+    RXDIF=$(echo $((RXBN - RXB)) )
+
+    tmux setenv -g TMUX_DOWNSPEED "$((RXDIF / 1024))" #Unit is KiB
+
+    work_magics
+}
+
+calculate_dl() {
+    if [[ $DL_CALCING == "true" ]] ; then
+        return
+    else
+        tmux setenv -g DL_CALCING true
+        work_magics;
+    fi
+}
+
+calculate_dl & echo $TMUX_DOWNSPEED
