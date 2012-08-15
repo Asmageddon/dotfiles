@@ -86,7 +86,7 @@ for file in $script_files ; do
     TARGET="$installation_dir/$scripts_subdir/$file";
     BACKUP="$installation_dir/.rcbackup/$scripts_subdir";
 
-    chmod +x "$TARGET"
+    chmod +x "$SOURCE"
     symlink "$SOURCE" "$TARGET" "$BACKUP";
 
 done
