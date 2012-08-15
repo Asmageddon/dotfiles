@@ -6,23 +6,10 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 #Get interface used to connect to the internet
 IF=$(bash "$DIR/internet_interface")
 
-#Calculate upload speed during 1 second duration
+#Calculate delta of uploaded bytes in 1 second duration
 TXB=$(</sys/class/net/$IF/statistics/tx_bytes)
-
-#Since unlike zsh, bash doesn't support floating point numbers,
-# we can't just accept a delay parameter :/
-if [[ $1 == "approx" ]] ; then
-    sleep 0.5
-else
-    sleep 1
-fi
-
+sleep 1
 TXBN=$(</sys/class/net/$IF/statistics/tx_bytes)
 TXDIF=$(echo $((TXBN - TXB)) )
 
-if [[ $1 == "approx" ]] ; then
-    echo -e "$((TXDIF / 1024 * 2))"
-else
-    echo -e "$((TXDIF / 1024))"
-fi
-#Unit is KiB
+echo -e "$((TXDIF / 1024))" #Unit is KiB
