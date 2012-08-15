@@ -15,7 +15,9 @@ work_magics() {
 
     tmux setenv -g TMUX_UPSPEED "$((TXDIF / 1024))" #Unit is KiB
 
-    work_magics
+    if [[ $(ps -C tmux | wc -l) > 1 ]] ; then
+        work_magics
+    fi
 }
 
 calculate_ul() {
