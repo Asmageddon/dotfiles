@@ -51,7 +51,7 @@ symlink() {
         ln -s "$1" "$2";
     fi
 
-    chmod +x "$1";
+    chmod +x "$2";
 
 }
 
@@ -86,7 +86,6 @@ for file in $script_files ; do
     TARGET="$installation_dir/$scripts_subdir/$file";
     BACKUP="$installation_dir/.rcbackup/$scripts_subdir";
 
-    chmod +x "$SOURCE"
     symlink "$SOURCE" "$TARGET" "$BACKUP";
 
 done
