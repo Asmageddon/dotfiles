@@ -23,4 +23,7 @@ calculate() {
     fi
 }
 
-calculate
+#Do not launch multiple copies
+if [[ $(ps -ef | grep tmux_network_usage | wc -l) > 1 ]] ; then
+    calculate
+fi

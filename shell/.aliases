@@ -18,8 +18,22 @@ alias yaourt='yaourt --noconfirm'
 alias yogurt='sudo yaourt --noconfirm'
 alias milkshake='yaourt -Ss'
 
-alias screenshot="scrot '%Y.%m.%d @ %H:%M:%S ($wx$h).png' -e 'nice -n 20 optipng "$f"; mv "$f" ~/Obrazy/'"
+alias screenshot="scrot $HOME/'%Y.%m.%d @ %H:%M:%S ($wx\$h).png' -e 'nice -n 20 optipng \$f; mv \$f ~/Pictures/screenshots'"
+alias sc='screenshot'
 
 alias servedir='python -m SimpleHTTPServer 9321'
 
 alias mplayer='mplayer -ass -embeddedfonts -ass-line-spacing 0 -vo xv -dr -sub-fuzziness 1 >/dev/null -framedrop'
+
+alias pause='pkill -SIGSTOP'
+alias resume='pkill -SIGCONT'
+
+alias lss='ls -lctr'
+
+if [[ $TERM_CHECK == "zsh" ]] ; then
+    alias reload='source ~/.zshrc';
+else
+    if [[ $TERM_CHECK == "bash" ]] ; then
+        alias reload='source ~/.bashrc';
+    fi
+fi

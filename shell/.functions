@@ -160,9 +160,14 @@ ccat() {
 }
 
 cless() {
-    src-hilite-lesspipe.sh $1 | less -R;
+    source-highlight -f esc -i $1 -o STDOUT | less -R;
 }
 
 zipdirs() {
     ls -1 --color=never | awk '{print "zip -r \"" $0 ".zip\" \"" $0 "\""}' | sh
+}
+
+shortcut() {
+    echo $* >> ~/.shortcuts;
+    source ~/.shortcuts;
 }
