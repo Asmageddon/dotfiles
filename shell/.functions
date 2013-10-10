@@ -142,32 +142,70 @@ flvsave() {
 	fi
 }
 
-#NOTE to self: Rewrite this to use sqlite3, perhaps as an external Python app
-MEMOFILE=~/.memo
-memo() {
-	local MEMO=""
-	if [[ "$*" == "read" ]] ; then
-		eval "less $MEMOFILE";
-	else
-		MEMO=$(echo -e $(date "+[%d/%m/%y]: %k:%M")"\n  "$*);
-		echo $MEMO;
-		echo $MEMO >> $MEMOFILE;
-	fi
-}
-
 ccat() {
     src-hilite-lesspipe.sh $1;
 }
 
 cless() {
-    source-highlight -f esc -i $1 -o STDOUT | less -R;
+    HIGHLIGHTED_TEXT=$(source-highlight -f esc -i $1)
+    if [[ "$?" == "0" ]] ; then
+        cat $HIGHLIGHTED_TEXT | less -R
+    else
+        less $1
+    fi
 }
 
 zipdirs() {
     ls -1 --color=never | awk '{print "zip -r \"" $0 ".zip\" \"" $0 "\""}' | sh
 }
 
-shortcut() {
-    echo $* >> ~/.shortcuts;
-    source ~/.shortcuts;
+pause() {
+    for pname in $@ ; do
+        pkill -SIGSTOP $pname;
+    done
+}
+
+resume() {
+    for pname in "$@" ; do
+        pkill -SIGCONT $pname
+    done
+}
+
+toggle() {
+    local STATE=""
+    for pname in "$@" ; do
+        local PID=$(ps -eo pid,comm | grep "$pname" | awk '{print $1}')
+
+        if [[ $PID != "" ]] ; then
+            if [[ $STATE == "" ]] ; then
+                STATE=$(cat /proc/$PID/status | grep "State:" | awk '{print $2}')
+            fi
+
+            local RETCODE=0
+
+            #T for paused, R for running
+            if [[ $STATE == "T" ]] ; then
+                kill -SIGCONT $PID
+                RETCODE="$?"
+                echo -n "Resuming $pname"
+            else
+                kill -SIGSTOP $PID
+                RETCODE="$?"
+                echo -n "Pausing $pname"
+            fi
+            if [[ $RETCODE != 0 ]] ; then
+                echo " [Failure]"
+            else
+                echo " [Success]"
+            fi
+        fi
+    done
+}
+
+CPU_HOGS="conky tmux_network_us"
+CPU_HOGS="$CPU_HOGS opera-next chromium firefox luakit"
+CPU_HOGS="$CPU_HOGS apt-get dpkg rred"
+
+toggle_hogs() {
+    toggle $(echo $CPU_HOGS)
 }

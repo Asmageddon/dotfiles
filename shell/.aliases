@@ -2,7 +2,7 @@ source ~/.shvars
 
 alias grep='grep --color=auto'
 alias ls='ls -Ah --color=force'
-if [[ $TERM_CHECK == "zsh" ]] ; then
+if [[ $SHELL_CHECK == "zsh" ]] ; then
 	alias lsd='ls -d *(/)'
 	alias lsf='ls -d *(^/)'
 fi
@@ -18,22 +18,17 @@ alias yaourt='yaourt --noconfirm'
 alias yogurt='sudo yaourt --noconfirm'
 alias milkshake='yaourt -Ss'
 
-alias screenshot="scrot $HOME/'%Y.%m.%d @ %H:%M:%S ($wx\$h).png' -e 'nice -n 20 optipng \$f; mv \$f ~/Pictures/screenshots'"
+alias screenshot="scrot $HOME/'%Y.%m.%d @ %H:%M:%S \\($wx\$h\\).png' -e 'nice -n 20 optipng \"\$f\"; mv \"\$f\" ~/Pictures/screenshots'"
 alias sc='screenshot'
 
 alias servedir='python -m SimpleHTTPServer 9321'
 
-alias mplayer='mplayer -ass -embeddedfonts -ass-line-spacing 0 -vo xv -dr -sub-fuzziness 1 >/dev/null -framedrop'
-
-alias pause='pkill -SIGSTOP'
-alias resume='pkill -SIGCONT'
+alias mplayer='mplayer -ass -embeddedfonts -ass-line-spacing 0 -vo xv -dr -sub-fuzziness 1 -alang eng -af-add volnorm >/dev/null -framedrop'
 
 alias lss='ls -lctr'
 
-if [[ $TERM_CHECK == "zsh" ]] ; then
+if [[ $SHELL_CHECK == "zsh" ]] ; then
     alias reload='source ~/.zshrc';
-else
-    if [[ $TERM_CHECK == "bash" ]] ; then
+elif [[ $SHELL_CHECK == "bash" ]] ; then
         alias reload='source ~/.bashrc';
     fi
-fi

@@ -1,49 +1,46 @@
 
-if [[ ! -n $TERM_CHECK ]] ; then
+if [[ ! -n $SHELL_CHECK ]] ; then
 	source ~/.shvars
+    #Pull $TEXT_USERNAME, $TEXT_HOSTNAME and $TEXT_WORKING_DIRECTORY (and everything else along the way :3)
 fi
 
-#Pull $TEXT_USERNAME, $TEXT_HOSTNAME and $TEXT_WORKING_DIRECTORY (and everything else along the way :3)
 
-if [[ -n $COLOR_SUPPORT ]] ; then
-	COLOR_DECORATION1='\e[0;31m'
-	COLOR_DECORATION2='\e[0;35m'
-	COLOR_DIRECTORY='\e[1;32m'
-	COLOR_SHELL="\e[1;31m"
-	NC='\e[0m' # No Color
+_COLOR_DECORATION1=$C_RED
+_COLOR_DECORATION2=$C_NONE$C_PURPLE #Have to add a C_NONE so it doesn't get the bold effect from the previous element
+_COLOR_DIRECTORY=$E_BOLD$C_GREEN
+_COLOR_SHELL=$E_BOLD$C_RED
+NC=$C_NONE # No Color
 
-	#Username color
+#Username color, red for root, green otherwise
 	if [[ "$UID" == 0 ]] ; then
-		COLOR_USERNAME='\e[0;31m'
+    _COLOR_USERNAME=$C_RED
 	else
-		COLOR_USERNAME='\e[0;32m'
+    _COLOR_USERNAME=$C_GREEN
 	fi
 
-	#Hostname color
+#Hostname color, yellow for remote, blue otherwise
 	if [ -n "$SSH_CONNECTION" ] ; then
 		# We're logged in remotely
-		COLOR_HOSTNAME='\e[1;33m'
+    _COLOR_HOSTNAME=$E_BOLD$C_YELLOW
 	else
-		COLOR_HOSTNAME='\e[1;34m'
-	fi
+    _COLOR_HOSTNAME=$E_BOLD$C_BLUE
 fi
 
-TEXT_FRAME1="["
-TEXT_FRAME2="]"
-TEXT_IN=" in "
-if [ -n "$UNICODE_SUPPORT" ] ; then # || [[ "$COLORTERM" != "" ]]
-	#Gentlemen, we're dealing with something dangerous here!
-	TEXT_AT='❤'
-	DECOR_FRAME1="╔"
-	DECOR_FRAME2="╚═> "
-	DECOR_FRAME3="  > "
-	DECOR_CHAR_ADDITIONAL="═"
+_TEXT_FRAME1="["
+_TEXT_FRAME2="]"
+_TEXT_IN=" in "
+if [ -n "$UNICODE_SUPPORT" ] ; then
+    _TEXT_AT='❤'
+    _DECOR_FRAME1="╔"
+    _DECOR_FRAME2="╚═> "
+    _DECOR_FRAME3="  > "
+    _DECOR_CHAR_ADDITIONAL="═"
 else
-	TEXT_AT='@'
-	DECOR_FRAME1="┌"
-	DECOR_FRAME2="└─> "
-	DECOR_FRAME3="  > "
-	DECOR_CHAR_ADDITIONAL="─"
+    _TEXT_AT='@'
+    _DECOR_FRAME1="┌"
+    _DECOR_FRAME2="└─> "
+    _DECOR_FRAME3="  > "
+    _DECOR_CHAR_ADDITIONAL="─"
 fi
 
 #Display visually which shell level we are in,
@@ -52,19 +49,19 @@ fi
 #   other shells and know when exitting won't log you out
 _SHLVL=$SHLVL
 while [[ $_SHLVL > 1 ]] ; do
-	DECOR_FRAME1=$DECOR_FRAME1$DECOR_CHAR_ADDITIONAL;
+    _DECOR_FRAME1=$_DECOR_FRAME1$_DECOR_CHAR_ADDITIONAL;
 	_SHLVL=$(($_SHLVL-1))
 done
 
 if [[ ! -n $NO_SET_PROMPT ]] ; then
-	PS1="$DECOR_FRAME1\
-$(echo $COLOR_DECORATION2)$TEXT_FRAME1\
-$(echo $COLOR_USERNAME)$TEXT_USERNAME\
-$(echo $COLOR_DECORATION1)$TEXT_AT\
-$(echo $COLOR_HOSTNAME)$TEXT_HOSTNAME\
-$(echo $COLOR_DECORATION2)$TEXT_FRAME2\
-$(echo $NC)$TEXT_IN\
-$(echo $COLOR_DIRECTORY)$TEXT_WORKING_DIRECTORY$(echo $NC)
-$DECOR_FRAME2"
-	PS2="$DECOR_FRAME3"
+    PS1="$_DECOR_FRAME1\
+$(echo $_COLOR_DECORATION2)$_TEXT_FRAME1\
+$(echo $_COLOR_USERNAME)$TEXT_USERNAME\
+$(echo $_COLOR_DECORATION1)$_TEXT_AT\
+$(echo $_COLOR_HOSTNAME)$TEXT_HOSTNAME\
+$(echo $_COLOR_DECORATION2)$_TEXT_FRAME2\
+$(echo $NC)$_TEXT_IN\
+$(echo $_COLOR_DIRECTORY)$TEXT_WORKING_DIRECTORY$(echo $NC)
+$_DECOR_FRAME2"
+    PS2="$_DECOR_FRAME3"
 fi

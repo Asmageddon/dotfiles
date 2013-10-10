@@ -27,12 +27,12 @@ if [[ -n $TITLEBAR_SUPPORT ]] ; then
 
 	ORIG_TITLE="Program: ";
 
-	if [[ $TERM_CHECK == "zsh" ]] ; then
+    if [[ $SHELL_CHECK == "zsh" ]] ; then
 		preexec() {
 			TITLE=$ORIG_TITLE$1;
 			print -Pn "\e]0;$TITLE\a";
 		}
-	elif [[ $TERM_CHECK == "bash" ]] ; then
+    elif [[ $SHELL_CHECK == "bash" ]] ; then
         set -o functrace;
         #For some reason this doesn't work on my system anymore...
 		trap 'echo -ne "\e]0;$ORIG_TITLE$BASH_COMMAND\a"' DEBUG;
