@@ -1,6 +1,6 @@
 
 if [[ ! -n $SHELL_CHECK ]] ; then
-	source ~/.shvars
+    source ~/.shvars
     #Pull $TEXT_USERNAME, $TEXT_HOSTNAME and $TEXT_WORKING_DIRECTORY (and everything else along the way :3)
 fi
 
@@ -12,17 +12,17 @@ _COLOR_SHELL=$E_BOLD$C_RED
 NC=$C_NONE # No Color
 
 #Username color, red for root, green otherwise
-	if [[ "$UID" == 0 ]] ; then
+if [[ "$UID" == 0 ]] ; then
     _COLOR_USERNAME=$C_RED
-	else
+else
     _COLOR_USERNAME=$C_GREEN
-	fi
+fi
 
 #Hostname color, yellow for remote, blue otherwise
-	if [ -n "$SSH_CONNECTION" ] ; then
-		# We're logged in remotely
+if [ -n "$SSH_CONNECTION" ] ; then
+    # We're logged in remotely
     _COLOR_HOSTNAME=$E_BOLD$C_YELLOW
-	else
+else
     _COLOR_HOSTNAME=$E_BOLD$C_BLUE
 fi
 
@@ -50,7 +50,7 @@ fi
 _SHLVL=$SHLVL
 while [[ $_SHLVL > 1 ]] ; do
     _DECOR_FRAME1=$_DECOR_FRAME1$_DECOR_CHAR_ADDITIONAL;
-	_SHLVL=$(($_SHLVL-1))
+    _SHLVL=$(($_SHLVL-1))
 done
 
 if [[ ! -n $NO_SET_PROMPT ]] ; then
