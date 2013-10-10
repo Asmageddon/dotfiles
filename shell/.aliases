@@ -3,8 +3,8 @@ source ~/.shvars
 alias grep='grep --color=auto'
 alias ls='ls -Ah --color=force'
 if [[ $SHELL_CHECK == "zsh" ]] ; then
-	alias lsd='ls -d *(/)'
-	alias lsf='ls -d *(^/)'
+    alias lsd='ls -d *(/)'
+    alias lsf='ls -d *(^/)'
 fi
 #Let's leave dir raw
 alias ping='ping -c 5'
@@ -30,5 +30,5 @@ alias lss='ls -lctr'
 if [[ $SHELL_CHECK == "zsh" ]] ; then
     alias reload='source ~/.zshrc';
 elif [[ $SHELL_CHECK == "bash" ]] ; then
-        alias reload='source ~/.bashrc';
-    fi
+    alias reload='source ~/.bashrc';
+fi

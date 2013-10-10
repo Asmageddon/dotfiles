@@ -1,5 +1,5 @@
 mkcd() {
-	mkdir -p "$1" && cd "$1";
+    mkdir -p "$1" && cd "$1";
 }
 
 ###
@@ -8,138 +8,138 @@ mkcd() {
 
 #Install a package
 i() {
-	local COMMAND=""
-	if [[ $(which apt-get | wc -l) == "1" ]]; then
-		COMMAND="apt-get install "
-	else
-		echo "No package manager I know installed, exiting"
-		return 0
-	fi
-	if [[ "$UID" != 0 ]]; then
-		if [[ $(which sudo | wc -l) == "1" ]]; then
-			COMMAND="sudo "$COMMAND;
-		elif [[ $(which su | wc -l) == "1" ]]; then
-			echo "You don't have sudo installed, using su; Type root password to continue";
-			COMMAND="su -c \""$COMMAND:"\"";
-		else
-			echo "Error, no su or sudo present, don't know what to do";
-		fi
-	fi
-	COMMAND=$COMMAND$*
-	eval $COMMAND
+    local COMMAND=""
+    if [[ $(which apt-get | wc -l) == "1" ]]; then
+        COMMAND="apt-get install "
+    else
+        echo "No package manager I know installed, exiting"
+        return 0
+    fi
+    if [[ "$UID" != 0 ]]; then
+        if [[ $(which sudo | wc -l) == "1" ]]; then
+            COMMAND="sudo "$COMMAND;
+        elif [[ $(which su | wc -l) == "1" ]]; then
+            echo "You don't have sudo installed, using su; Type root password to continue";
+            COMMAND="su -c \""$COMMAND:"\"";
+        else
+            echo "Error, no su or sudo present, don't know what to do";
+        fi
+    fi
+    COMMAND=$COMMAND$*
+    eval $COMMAND
 }
 
 #Uninstall a package
 ui() {
-	local COMMAND=""
-	if [[ $(which apt-get | wc -l) == "1" ]]; then
-		COMMAND="apt-get remove "
-	else
-		echo "No package manager I know installed, exiting"
-		return 0
-	fi
-	if [ "$UID" != 0 ]; then
-		if [[ $(which sudo | wc -l) == "1" ]]; then
-			COMMAND="sudo "$COMMAND;
-		elif [[ $(which su | wc -l) == "1" ]]; then
-			echo "You don't have sudo installed, using su; Type root password to continue";
-			COMMAND="su -c \""$COMMAND:"\"";
-		else
-			echo "Error, no su or sudo present, don't know what to do";
-		fi
-	fi
-	COMMAND=$COMMAND$*
-	eval $COMMAND
+    local COMMAND=""
+    if [[ $(which apt-get | wc -l) == "1" ]]; then
+        COMMAND="apt-get remove "
+    else
+        echo "No package manager I know installed, exiting"
+        return 0
+    fi
+    if [ "$UID" != 0 ]; then
+        if [[ $(which sudo | wc -l) == "1" ]]; then
+            COMMAND="sudo "$COMMAND;
+        elif [[ $(which su | wc -l) == "1" ]]; then
+            echo "You don't have sudo installed, using su; Type root password to continue";
+            COMMAND="su -c \""$COMMAND:"\"";
+        else
+            echo "Error, no su or sudo present, don't know what to do";
+        fi
+    fi
+    COMMAND=$COMMAND$*
+    eval $COMMAND
 }
 
 #Find a package
 fp() {
-	local COMMAND=""
-	if [[ $(which apt-cache | wc -l) == "1" ]]; then
-		COMMAND="apt-cache search "
-	else
-		echo "No package manager I know installed, exiting"
-		return 0
-	fi
-	COMMAND=$COMMAND$*
-	eval $COMMAND
+    local COMMAND=""
+    if [[ $(which apt-cache | wc -l) == "1" ]]; then
+        COMMAND="apt-cache search "
+    else
+        echo "No package manager I know installed, exiting"
+        return 0
+    fi
+    COMMAND=$COMMAND$*
+    eval $COMMAND
 }
 
 #Launch torrents :3
 t() {
-	if [[ -d "/media/You will die" ]] ; then
-		if [ "$(ps -ef | grep -c deluged)" = 1 ]; then
-			deluged;
-		fi
-		deluge-console;
-	else
-		echo "Your trololent drive is not mounted!"
-	fi
+    if [[ -d "/media/You will die" ]] ; then
+        if [ "$(ps -ef | grep -c deluged)" = 1 ]; then
+            deluged;
+        fi
+        deluge-console;
+    else
+        echo "Your trololent drive is not mounted!"
+    fi
 }
 
 #View a website in links2
 glinks() {
-	local COMMAND="links2"
-	if [[ $DISPLAY != "" ]] ; then
-		COMMAND="$COMMAND -g"
-	fi
-	if [[ $* == "" ]] ; then
-		COMMAND="$COMMAND 'www.google.com'"
-	else
-		COMMAND="$COMMAND '$*'"
-	fi
-	if [[ $DISPLAY != "" ]] ; then
-		COMMAND="$COMMAND &"
-	fi
-	eval $COMMAND
+    local COMMAND="links2"
+    if [[ $DISPLAY != "" ]] ; then
+        COMMAND="$COMMAND -g"
+    fi
+    if [[ $* == "" ]] ; then
+        COMMAND="$COMMAND 'www.google.com'"
+    else
+        COMMAND="$COMMAND '$*'"
+    fi
+    if [[ $DISPLAY != "" ]] ; then
+        COMMAND="$COMMAND &"
+    fi
+    eval $COMMAND
 }
 #Or directly google something
 google() {
-	local TARGET='http://www.google.com/search?q='$*;
-	glinks $TARGET;
+    local TARGET='http://www.google.com/search?q='$*;
+    glinks $TARGET;
 }
 
 #Or wiki it
 wiki() {
-	local TARGET='http://en.wikipedia.org/wiki/Special:Search?search='$*;
-	glinks $TARGET;
+    local TARGET='http://en.wikipedia.org/wiki/Special:Search?search='$*;
+    glinks $TARGET;
 }
 
 #I think this deserves "Hack of the century award"
 flvsave() {
-	if [[ $1 == "" ]] ; then
-		local SAVE_DIR="/home/$USERNAME/Downloads/flash"
-	else
-		local SAVE_DIR="$1"
-	fi
-	if [[ ! -d "$SAVE_DIR" ]] ; then
-		mkdir "$SAVE_DIR";
-	fi
-	local FLV_STREAM_COUNT=$(lsof +L1 -anPT | grep FlashXX | wc -l);
-	if [[ $FLV_STREAM_COUNT > 0 ]] ; then
-		if [[ $FLV_STREAM_COUNT == 1 ]] ; then
-			echo "Found one open flash stream:";
-		else
-			echo "Found $FLV_STREAM_COUNT flash videos being streamed:";
-		fi
-		eval $(lsof +L1 | grep FlashXX | awk '{ print "export " substr($10, 6) "=" $7 ";"; }') #Save video sizes into environment variables
-		sleep 2; #Wait a bit so they can load if they're still loading
-		echo "Videos still loading:"
-		lsof +L1 | grep FlashXX | awk 'ENVIRON[substr($10, 6)] != $7 {
-			print "  " $2 "/" $1 " " $10 " (" $7 / 1024 / 1024 " MiB+)";
-		}'
-		echo "Fully loaded videos:";
-		lsof +L1 | grep FlashXX | awk 'ENVIRON[substr($10, 6)] == $7 {
-			print "  " $2 "/" $1 " " $10 " (" $7 / 1024 / 1024 " MiB)";
-		}' #Check if video sizes are still the same
-		echo "Saving fully loaded videos to $SAVE_DIR";
+    if [[ $1 == "" ]] ; then
+        local SAVE_DIR="/home/$USERNAME/Downloads/flash"
+    else
+        local SAVE_DIR="$1"
+    fi
+    if [[ ! -d "$SAVE_DIR" ]] ; then
+        mkdir "$SAVE_DIR";
+    fi
+    local FLV_STREAM_COUNT=$(lsof +L1 -anPT | grep FlashXX | wc -l);
+    if [[ $FLV_STREAM_COUNT > 0 ]] ; then
+        if [[ $FLV_STREAM_COUNT == 1 ]] ; then
+            echo "Found one open flash stream:";
+        else
+            echo "Found $FLV_STREAM_COUNT flash videos being streamed:";
+        fi
+        eval $(lsof +L1 | grep FlashXX | awk '{ print "export " substr($10, 6) "=" $7 ";"; }') #Save video sizes into environment variables
+        sleep 2; #Wait a bit so they can load if they're still loading
+        echo "Videos still loading:"
+        lsof +L1 | grep FlashXX | awk 'ENVIRON[substr($10, 6)] != $7 {
+            print "  " $2 "/" $1 " " $10 " (" $7 / 1024 / 1024 " MiB+)";
+        }'
+        echo "Fully loaded videos:";
+        lsof +L1 | grep FlashXX | awk 'ENVIRON[substr($10, 6)] == $7 {
+            print "  " $2 "/" $1 " " $10 " (" $7 / 1024 / 1024 " MiB)";
+        }' #Check if video sizes are still the same
+        echo "Saving fully loaded videos to $SAVE_DIR";
 
-		lsof +L1 -anPT | grep FlashXX | awk -v save_dir=$SAVE_DIR 'ENVIRON[substr($10, 6)] == $7 {
-			print "cp -n /proc/" $2 "/fd/" substr($4, 1, length($4)-1) " " save_dir "/" substr($10, 13) ".flv";
-		}' | sh;
+        lsof +L1 -anPT | grep FlashXX | awk -v save_dir=$SAVE_DIR 'ENVIRON[substr($10, 6)] == $7 {
+            print "cp -n /proc/" $2 "/fd/" substr($4, 1, length($4)-1) " " save_dir "/" substr($10, 13) ".flv";
+        }' | sh;
 
-		echo "Done";
-	fi
+        echo "Done";
+    fi
 }
 
 ccat() {
