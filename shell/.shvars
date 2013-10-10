@@ -98,14 +98,43 @@ fi
 ###
 
 if [[ ! -n $TERMSTACKLVL ]] ; then
-	export TERMSTACKLVL=0;
-	export TERMSTACK="";
+    export TERMSTACKLVL=0;
+    export TERMSTACK="";
 fi
 
 if [[ $SHLVL > $TERMSTACKLVL ]] ; then
-	export TERMSTACKLVL="$SHLVL";
-	if [[ $SHLVL > 1 ]] ; then
-		export TERMSTACK="$TERMSTACK\n";
-	fi
-	export TERMSTACK="$TERMSTACK$SHLVL [$USERNAME@$HOSTNAME] using $TERM_CHECK in $TERM"
+    export TERMSTACKLVL="$SHLVL";
+    if [[ $SHLVL > 1 ]] ; then
+        export TERMSTACK="$TERMSTACK\n";
+    fi
+    export TERMSTACK="$TERMSTACK$SHLVL [$USERNAME@$HOSTNAME] using $SHELL_CHECK in $TERM"
+fi
+
+
+#Colors for zsh and bash, only set if the terminal supports them
+if [[ -n $COLOR_SUPPORT ]] ; then
+    C_RED='\e[31m'
+    C_GREEN='\e[32m'
+    C_YELLOW='\e[33m'
+    C_BLUE='\e[34m'
+    C_PURPLE='\e[35m'
+    C_CYAN='\e[36m'
+    C_GRAY='\e[37m'
+    C_WHITE='\e[38m'
+    C_NONE='\e[0m'
+
+    C_BG_RED='\e[41m'
+    C_BG_GREEN='\e[42m'
+    C_BG_YELLOW='\e[43m'
+    C_BG_BLUE='\e[44m'
+    C_BG_PURPLE='\e[45m'
+    C_BG_CYAN='\e[46m'
+    C_BG_GRAY='\e[47m'
+    C_BG_WHITE='\e[48m'
+
+    E_BOLD='\e[1m'
+    E_CURSIVE='\e[3m'
+    E_UNDERLINE='\e[4m'
+    E_BLINK='\e[5m'
+    E_INVERT='\e[7m'
 fi
