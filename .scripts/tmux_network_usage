@@ -1,5 +1,27 @@
 #!/bin/bash
 
+update_ping() {
+    if [[ $1 != "" ]] ; then
+        IP=$1
+    else
+        IP="8.8.8.8"
+    fi
+
+    while [[ $(ps -C tmux | wc -l) > 1 ]] ; do
+        PING=$(/bin/ping $IP -c 1 -W 3)
+
+        if [[ $? != 0 ]] ; then
+            tmux setenv -g TMUX_PING "DOWN";
+        else
+            PING=$(echo $PING | sed -ru 's/.*time=//;s/ms.*/ms/')
+            echo $PING
+            tmux setenv -g TMUX_PING "$PING";
+        fi
+
+        sleep 0.5
+    done
+}
+
 calculate() {
     if [[ $NET_CALCING == "true" ]] ; then
         return
@@ -24,6 +46,7 @@ calculate() {
 }
 
 #Do not launch multiple copies
-if [[ $(ps -ef | grep tmux_network_usage | wc -l) > 1 ]] ; then
+if [[ $(ps -C tmux_network_usage | wc -l) > 1 ]] ; then
+    update_ping 8.8.8.8 &
     calculate
 fi
