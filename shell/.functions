@@ -149,7 +149,7 @@ ccat() {
 cless() {
     HIGHLIGHTED_TEXT=$(source-highlight -f esc -i $1)
     if [[ "$?" == "0" ]] ; then
-        cat $HIGHLIGHTED_TEXT | less -R
+        echo "$HIGHLIGHTED_TEXT" | less -R
     else
         less $1
     fi
@@ -187,16 +187,16 @@ toggle() {
             if [[ $STATE == "T" ]] ; then
                 kill -SIGCONT $PID
                 RETCODE="$?"
-                echo -n "Resuming $pname"
+                echo -n "Resuming "$C_YELLOW"$pname"
             else
                 kill -SIGSTOP $PID
                 RETCODE="$?"
-                echo -n "Pausing $pname"
+                echo -n "Pausing "$C_CYAN"$pname"
             fi
             if [[ $RETCODE != 0 ]] ; then
-                echo " [Failure]"
+                echo $C_NONE" ["$E_BOLD$C_RED"Failure"$C_NONE"]"
             else
-                echo " [Success]"
+                echo $C_NONE" ["$E_BOLD$C_GREEN"Success"$C_NONE"]"
             fi
         fi
     done
@@ -206,6 +206,18 @@ CPU_HOGS="conky tmux_network_us"
 CPU_HOGS="$CPU_HOGS opera-next chromium firefox luakit"
 CPU_HOGS="$CPU_HOGS apt-get dpkg rred"
 
-toggle_hogs() {
+hogs() {
     toggle $(echo $CPU_HOGS)
+}
+
+new_session() {
+    DNUM=`echo $DISPLAY | sed 's/\..*$//'`
+    echo reserve > /var/run/xdmctl/xdmctl-$DNUM
+}
+
+remount() {
+    sudo umount "/media/asmageddon/You will die"
+    sudo umount "/media/asmageddon/UWAGA - Menele"
+    sudo mount /dev/sdc2 "/media/You will die"
+    sudo mount /dev/sdc1 "/media/UWAGA - Menele"
 }

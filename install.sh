@@ -6,9 +6,9 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 #If an argument is provided, install there, otherwise in $HOME (won't work outside of $HOME anyway as of now :p)
 if [[ -n $* ]] ; then
-	installation_dir=$*
+    installation_dir=$*
 else
-	installation_dir="$HOME"
+    installation_dir="$HOME"
 fi
 
 #Function to check if directory is empty
@@ -46,7 +46,7 @@ symlink() {
             echo "$1 -> $2";
             ln -s "$1" "$2";
         fi
-	else
+    else
         echo "$1 -> $2";
         ln -s "$1" "$2";
     fi
@@ -58,7 +58,7 @@ symlink() {
 shell_config_dir="shell"
 shell_files=".aliases .bashrc .promptrc .shvars .zshrc .bash_profile .functions .shrc .termtitle"
 for file in $shell_files ; do
-	SOURCE="$DIR/$shell_config_dir/$file";
+    SOURCE="$DIR/$shell_config_dir/$file";
     TARGET="$installation_dir/$file";
     BACKUP="$installation_dir/.rcbackup";
 
@@ -68,7 +68,7 @@ done
 
 other_files=".tmux.conf .conkyrc .Xdefaults yaourtrc"
 for file in $other_files ; do
-	SOURCE="$DIR/$file";
+    SOURCE="$DIR/$file";
     TARGET="$installation_dir/$file";
     BACKUP="$installation_dir/.rcbackup";
 
@@ -82,10 +82,20 @@ if [[ ! -d "$installation_dir/$scripts_subdir/" ]] ; then
 fi
 script_files=$(ls $scripts_subdir)
 for file in $script_files ; do
-	SOURCE="$PWD/.scripts/$file";
+    SOURCE="$PWD/.scripts/$file";
     TARGET="$installation_dir/$scripts_subdir/$file";
     BACKUP="$installation_dir/.rcbackup/$scripts_subdir";
 
     symlink "$SOURCE" "$TARGET" "$BACKUP";
 
+done
+
+geany_theme_subdir="other/geany-themes"
+geany_theme_files=$(ls $geany_theme_subdir)
+for file in $geany_theme_files ; do
+    SOURCE="$PWD/other/geany-themes/$file";
+    TARGET="$installation_dir/.config/geany/colorschemes/$file";
+    BACKUP="$installation_dir/.rcbackup/geany-themes";
+
+    symlink "$SOURCE" "$TARGET" "$BACKUP";
 done

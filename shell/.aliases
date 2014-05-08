@@ -32,3 +32,5 @@ if [[ $SHELL_CHECK == "zsh" ]] ; then
 elif [[ $SHELL_CHECK == "bash" ]] ; then
     alias reload='source ~/.bashrc';
 fi
+
+alias randdir='python -c "import random, os; print(random.choice(os.listdir(\".\")))"'
