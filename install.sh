@@ -35,8 +35,16 @@ else
     fi
 fi
 
+if [[ ! -d "$HOME/.local/bin" ]] ; then
+    echo "Creating $HOME/.local/bin"
+    mkdir -p "$HOME/.local/bin"
+fi
+
 #Work the magic
 symlink() {
+    # $1 - source file
+    # $2 - target file
+    # $3 - backup directory
     if [[ -f "$2" ]] ; then
         if [[ $(readlink "$2") == "$1" ]] ; then
             return;
@@ -55,47 +63,43 @@ symlink() {
 
 }
 
-shell_config_dir="shell"
-shell_files=".aliases .bashrc .promptrc .shvars .zshrc .bash_profile .functions .shrc .termtitle"
-for file in $shell_files ; do
-    SOURCE="$DIR/$shell_config_dir/$file";
-    TARGET="$installation_dir/$file";
-    BACKUP="$installation_dir/.rcbackup";
+install_files() {
+    local SOURCE_DIR=$1
+    local FILES=$2
+    local TARGET_DIR=$3 # .config/geany/colorschemes
+    local BACKUP_DIR=$4
 
-    symlink "$SOURCE" "$TARGET" "$BACKUP";
+    echo "Installing files from $PWD/$SOURCE_DIR to $installation_dir/$TARGET_DIR"
 
-done
+    if [[ $FILES == "" ]] ; then
+        FILES=$(ls -A "$PWD/$SOURCE_DIR")
+    fi
 
-other_files=".tmux.conf .conkyrc .Xdefaults yaourtrc"
-for file in $other_files ; do
-    SOURCE="$DIR/$file";
-    TARGET="$installation_dir/$file";
-    BACKUP="$installation_dir/.rcbackup";
+    if [[ ! -d "$installation_dir/$TARGET_DIR/" ]] ; then
+        mkdir -p "$installation_dir/$TARGET_DIR/"
+    fi
 
-    symlink "$SOURCE" "$TARGET" "$BACKUP";
+    for file in $FILES ; do
+        SOURCE="$PWD/$SOURCE_DIR/$file";
+        TARGET="$installation_dir/$TARGET_DIR/$file";
+        BACKUP="$installation_dir/.rcbackup/$BACKUP_DIR";
 
-done
+        symlink "$SOURCE" "$TARGET" "$BACKUP";
+    done
+}
 
-scripts_subdir=".scripts"
-if [[ ! -d "$installation_dir/$scripts_subdir/" ]] ; then
-    mkdir "$installation_dir/$scripts_subdir/"
-fi
-script_files=$(ls $scripts_subdir)
-for file in $script_files ; do
-    SOURCE="$PWD/.scripts/$file";
-    TARGET="$installation_dir/$scripts_subdir/$file";
-    BACKUP="$installation_dir/.rcbackup/$scripts_subdir";
 
-    symlink "$SOURCE" "$TARGET" "$BACKUP";
+# Shell config files
+install_files "shell" ".aliases .bashrc .promptrc .shvars .zshrc .bash_profile .functions .shrc .termtitle" "" ""
 
-done
+# Miscellanous files
+install_files "" ".tmux.conf .conkyrc yaourtrc" "" ""
 
-geany_theme_subdir="other/geany-themes"
-geany_theme_files=$(ls $geany_theme_subdir)
-for file in $geany_theme_files ; do
-    SOURCE="$PWD/other/geany-themes/$file";
-    TARGET="$installation_dir/.config/geany/colorschemes/$file";
-    BACKUP="$installation_dir/.rcbackup/geany-themes";
+# Scripts
+install_files ".scripts" "" ".scripts" ".scripts"
 
-    symlink "$SOURCE" "$TARGET" "$BACKUP";
-done
+# Geany themes
+install_files "other/geany-themes" "" ".config/geany/colorschemes" "geany-themes"
+
+# X.Org files - locale, themes, fonts
+install_files "xorg" "" "" ""

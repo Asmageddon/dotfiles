@@ -1,6 +1,11 @@
 source ~/.aliases
 source ~/.functions
 
+if [[ -z $__LOCAL_BIN_IN_PATH ]] ; then
+    export __LOCAL_BIN_IN_PATH="TRUE"
+    export PATH="$PATH:$HOME/.local/bin"
+fi
+
 if   [[ $(which most | awk '{print $2}') != "not" ]] ; then
     export PAGER="most"
 fi
@@ -8,20 +13,20 @@ fi
 export EDITOR="nano"
 
 if [[ $TERM != *screen* ]] ; then
-	COMMAND=""
-	if   [[ $(which tmux | awk '{print $2}') != "not" ]] ; then
-		COMMAND="tmux";
-	elif [[ $(which screen | awk '{print $2}') != "not" ]] ; then
-		COMMAND="screen";
-	fi
+    COMMAND=""
+    if   [[ $(which tmux | awk '{print $2}') != "not" ]] ; then
+        COMMAND="tmux";
+    elif [[ $(which screen | awk '{print $2}') != "not" ]] ; then
+        COMMAND="screen";
+    fi
 
-	if [[ -n $SSH_CONNECTION ]] ; then
-		exec $COMMAND;
-	elif [[ $TERM == "linux" ]] ; then
-		exec $COMMAND;
-	elif [[ $TERM == *rxvt* ]] ; then
-		exec $COMMAND;
-	elif [[ $TERM == *vte* ]] ; then
-		exec $COMMAND;
-	fi
+    if [[ -n $SSH_CONNECTION ]] ; then
+        exec $COMMAND;
+    elif [[ $TERM == "linux" ]] ; then
+        exec $COMMAND;
+    elif [[ $TERM == *rxvt* ]] ; then
+        exec $COMMAND;
+    elif [[ $TERM == *vte* ]] ; then
+        exec $COMMAND;
+    fi
 fi
