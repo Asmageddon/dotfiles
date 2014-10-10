@@ -2,10 +2,10 @@ source ~/.shvars
 
 alias grep='grep --color=auto'
 alias ls='ls -Ah --color=force'
-if [[ $SHELL_CHECK == "zsh" ]] ; then
-    alias lsd='ls -d *(/)'
-    alias lsf='ls -d *(^/)'
-fi
+
+alias lsf='find -L . -maxdepth 1 -type f -print0 | sed s:\./::g | xargs -0r ls -Ah --color=force'
+alias lsd='find -L . -maxdepth 1 -type d -print0 | sed s:\./::g | xargs -0r ls -d -Ah --color=force'
+
 #Let's leave dir raw
 alias ping='ping -c 5'
 alias rm='rm -I'

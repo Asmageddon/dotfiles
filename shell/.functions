@@ -173,8 +173,17 @@ resume() {
 
 toggle() {
     local STATE=""
+    local PID_LIST=""
+    local i=0
     for pname in "$@" ; do
-        local PID=$(ps -eo pid,comm | grep "$pname" | awk '{print $1}')
+        for pid in $(ps -eo pid,comm | grep "$pname" | grep -v "defunct" | awk '{print $1}') ; do
+            #echo $pname":"$pid
+            PID_LIST="$PID_LIST$pname:$pid "
+        done
+    done
+    for pid_name in $(echo $PID_LIST) ; do
+        local PNAME=$(echo $pid_name | awk -F: '{print $1}')
+        local PID=$(echo $pid_name | awk -F: '{print $2}')
 
         if [[ $PID != "" ]] ; then
             if [[ $STATE == "" ]] ; then
@@ -187,11 +196,11 @@ toggle() {
             if [[ $STATE == "T" ]] ; then
                 kill -SIGCONT $PID
                 RETCODE="$?"
-                echo -n "Resuming "$C_YELLOW"$pname"
+                echo -n "Resuming "$C_YELLOW"$pid_name"
             else
                 kill -SIGSTOP $PID
                 RETCODE="$?"
-                echo -n "Pausing "$C_CYAN"$pname"
+                echo -n "Pausing "$C_CYAN"$pid_name"
             fi
             if [[ $RETCODE != 0 ]] ; then
                 echo $C_NONE" ["$E_BOLD$C_RED"Failure"$C_NONE"]"
@@ -220,4 +229,8 @@ remount() {
     sudo umount "/media/asmageddon/UWAGA - Menele"
     sudo mount /dev/sdc2 "/media/You will die"
     sudo mount /dev/sdc1 "/media/UWAGA - Menele"
+}
+
+url_encode() {
+    echo $1 | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g; s/'"'"'/\&#39;/g'
 }
