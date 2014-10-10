@@ -30,3 +30,5 @@ if [[ $TERM != *screen* ]] ; then
         exec $COMMAND;
     fi
 fi
+
+export PYTHONSTARTUP="/home/$USER/.pythonrc"

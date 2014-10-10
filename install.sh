@@ -101,5 +101,8 @@ install_files ".scripts" "" ".scripts" ".scripts"
 # Geany themes
 install_files "other/geany-themes" "" ".config/geany/colorschemes" "geany-themes"
 
+# Python stuff
+install_files "other/python" ".pythonrc" "" ""
+
 # X.Org files - locale, themes, fonts
 install_files "xorg" "" "" ""
