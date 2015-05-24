@@ -6,8 +6,16 @@ import sys, os, atexit
 
 try:
     __IPYTHON__
+    __in_ipython = True
+except:
+    __in_ipython = False
+
+# Colors in less
+if __in_ipython:
     os.environ['PAGER'] = "less -r"
-except NameError:
+
+# Readline for input history and completion
+if not __in_ipython:
     histfile_path = os.environ["HOME"] + "/.python_history"
     if not os.path.exists(histfile_path): open(histfile_path, "w").close()
     histfile = histfile_path
@@ -15,7 +23,7 @@ except NameError:
         import readline
         readline.read_history_file(histfile)
     except ImportError:
-        print "Module readline not available."
+        print("Module readline not available.")
     else:
         import rlcompleter
         readline.parse_and_bind("tab: complete")
@@ -23,40 +31,126 @@ except NameError:
     atexit.register(readline.write_history_file, histfile)
     del histfile
 
-# nice to have stdout unbuffered.  but needs to be idempotent
-if "<fdopen>" not in str(sys.stdout):
-  sys.stdout = os.fdopen(1,'w',0)
+# Inspired and adapted from: https://gist.github.com/nova77/5403446
+def clipboard(value = None):
+    value = value and str(value) or None
+    if sys.platform == 'darwin':
+        if value is not None:
+            from AppKit import NSPasteboard, NSArray
+            pb = NSPasteboard.generalPasteboard()
+            pb.clearContents()
+            a = NSArray.arrayWithObject_(arg)
+            pb.writeObjects_(a)
 
+            return value
+        else:
+            raise ValueError("Pasting is unsupported on OSX")
+    elif sys.platform.startswith('linux'):
+        from subprocess import Popen, PIPE
+        if value is not None:
+            p = Popen(['xsel', '-bi'], stdin=PIPE)
+            p.communicate(input=paste)
+            return value
+        else:
+            p = Popen(['xsel', '-bo'], stdout=PIPE)
+            return p.stdout.read()
+    else:
+        raise ImportError("Only Linux and OS X are supported!")
 
-## I think it's nice to have lots of crap in the global namespace by default
+if __in_ipython:
+    from IPython.core.magic import register_line_cell_magic
+
+    @register_line_cell_magic
+    def copy(expr):
+        text = str(eval(expr))
+        if text is not None:
+            clipboard(text)
+            print "Copied to clipboard!"
+        else:
+            raise ValueError("Global value '%s' not found" % var_name)
+
+    # We delete it to avoid name conflicts for automagic to work
+    del copy
 
 #from urllib2 import urlopen
-import re
 #from copy import copy, deepcopy
+import re, random, math, time
 from pprint import pprint
-#from datetime import datetime,timedelta
 from collections import defaultdict
-import itertools
-import time
-import random
-import subprocess
 
-
-def join(seq, sep=" "):
-  " because str.join() is annoying "
-  return sep.join(str(x) for x in seq)
+golden_ratio = (1.0 + math.sqrt(5)) / 2
 
 def uniq_c(seq):
-  ret = defaultdict(lambda:0)
-  for x in seq:
-    ret[x] += 1
-  return dict(ret)
-
-def flatten(iter):
-  return list(itertools.chain(*iter))
+    ret = defaultdict(lambda:0)
+    for x in seq:
+        ret[x] += 1
+    return dict(ret)
 
 def flip(pairs):
-  return [(y,x) for x,y in pairs]
+    return [(y,x) for x,y in pairs]
 
-T = True
-F = False
+# Unicode stuff
+def expandUnicodeCateogry(name):
+    categories = {
+        "C": {
+            "": "Other",
+            "c": "Control", "f": "Format", "n": "Not Assigned",
+            "o": "Private Use", "s": "Surrogate",
+        }, "L": {
+            "": "Letter",
+            "C": "Cased", "l": "Lowercase", "m": "Modifier",
+            "o": "Other", "t": "Titlecase", "u": "Uppercase"
+        }, "M": {
+            "": "Mark",
+            "c": "Spacing Combining", "e": "Enclosing", "n": "Nonspacing"
+        }, "N": {
+            "": "Number",
+            "d": "Decimal Digit", "l": "Letter", "o": "Other"
+        }, "P": {
+            "": "Punctuation",
+            "c": "Connector", "d": "Dash", "o": "Other",
+            "i": "Initial Quote", "f": "Final Quote",
+            "s": "Open", "e": "Close"
+        }, "S": {
+            "": "Symbol",
+            "c": "Currency", "k": "Modifier", "m": "Math", "o": "Other"
+        }, "Z": {
+            "": "Separator",
+            "l": "Line", "p": "Paragraph", "s": "Space"
+        }
+    }
+    try:
+        cat = categories[name[0]]
+        return ", ".join([ cat[""], cat[name[1]] ])
+    except KeyError:
+        return "Invalid Category"
+
+def unicat(string):
+    import unicodedata
+    try:
+        string = unicode(string)
+    except: pass
+    for char in string:
+        cat = unicodedata.category(char)
+        fullcat = expandUnicodeCateogry(cat)
+        name = unicodedata.name(char)
+        decomp = unicodedata.decomposition(char) or oct(ord("_"))[2:].rjust(4, "0")
+        print('%s: [%s] %s ("%s")' % (char, cat, fullcat, name))
+
+# Define execfile if it doesn't exist
+try:
+    execfile
+except:
+    def execfile(path, _globals = None, _locals = None):
+        import os, sys, imp
+        path = path.replace("~", os.environ.get("HOME"))
+        path = os.path.abspath(path)
+        exec(
+            open(path, "r").read(),
+            _globals or globals(),
+            _locals or _globals or locals(),
+        )
+
+def reloadrc():
+    execfile("~/.pythonrc", globals())
+rerc = reloadrc
