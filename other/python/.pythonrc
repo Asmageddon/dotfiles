@@ -80,6 +80,18 @@ from collections import defaultdict
 
 golden_ratio = (1.0 + math.sqrt(5)) / 2
 
+def movavg(seq, window):
+    before, after = int((window-1) / 2.0 + 0.5), int((window-1) / 2.0)
+    result = []
+    for i in range(len(seq)):
+        start, end = max(i - before, 0), min(i + after, len(seq))
+        mult = (end - start)
+        result.append(1.0 * sum(seq[start:end]) / mult)
+    return result
+
+def bayesian_average(constant, mean, data_sum, data_count):
+    return (constant * mean + data_sum) / (constant + data_count)
+
 def uniq_c(seq):
     ret = defaultdict(lambda:0)
     for x in seq:
