@@ -66,10 +66,10 @@ ${color }DISK${hr 2}$color
 ${color green}$fs_used_perc% $color(${color red}${fs_used /}$color/${fs_size /})
 Read: $diskio_read $alignr Write: $diskio_write
 ${diskiograph_read 25,140 000000} ${alignr}${diskiograph_write 25,140 000000}
-${color }NETWORK (${addr eth1}) ${hr 2}$color
-Down: ${downspeed eth1}/s ${alignr}Up: ${upspeed eth1}/s
-${downspeedgraph eth1 25,140 000000 ff0000} ${alignr}${upspeedgraph eth1 25,140 000000 00ff00}
-Total: ${totaldown eth1} ${alignr}Total: ${totalup eth1}
+${color }NETWORK (${addr eth0}) ${hr 2}$color
+Down: ${downspeed eth0}/s ${alignr}Up: ${upspeed eth0}/s
+${downspeedgraph eth0 25,140 000000 ff0000} ${alignr}${upspeedgraph eth0 25,140 000000 00ff00}
+Total: ${totaldown eth0} ${alignr}Total: ${totalup eth0}
 ${color red}Listening ports:$color
 ${texeci 10 netstat -tulpen4 | egrep "tcp|udp" | grep LISTEN | sed -e 's/:/ /' -e 's/0\.0\.0\.0/ALL/' -e 's/192\.168\.1\.[0-9]*/LAN/' -e 's/127.0.0.1/LO/' -e 's/LISTEN//' | awk '{print "  " $5 "/" $1 "-" $4 "\t by " $9}' | sort -n }
 #${color }RANDOM WORDS${hr 2}$color
