@@ -1,0 +1,10 @@
+#!/bin/bash
+if [[ $(which ebook-convert | awk '{print $2}') == "not" ]] ; then
+    echo "You need to install calibre(which contains the ebook-convert program)"
+else
+    for i in "$@" ; do
+        NAME="$i"
+        NAME_NO_EXT="${NAME%.*}"
+        ebook-convert "$NAME" "$NAME_NO_EXT.pdf"
+    done
+fi

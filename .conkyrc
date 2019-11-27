@@ -1,6 +1,6 @@
 # Create own window instead of using desktop (required in nautilus)
 own_window yes
-own_window_type unknown
+own_window_type override
 own_window_transparent yes
 own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager,no_shadow
 
@@ -32,8 +32,8 @@ default_color grey90
 
 alignment top_right
 
-gap_x 10
-gap_y 10
+gap_x 12
+gap_y 24
 
 TEXT
 ${font size=12}${texeci 1 date}${font}
@@ -66,13 +66,15 @@ ${color }DISK${hr 2}$color
 ${color green}$fs_used_perc% $color(${color red}${fs_used /}$color/${fs_size /})
 Read: $diskio_read $alignr Write: $diskio_write
 ${diskiograph_read 25,140 000000} ${alignr}${diskiograph_write 25,140 000000}
-${color }NETWORK (${addr eth0}) ${hr 2}$color
-Down: ${downspeed eth0}/s ${alignr}Up: ${upspeed eth0}/s
-${downspeedgraph eth0 25,140 000000 ff0000} ${alignr}${upspeedgraph eth0 25,140 000000 00ff00}
-Total: ${totaldown eth0} ${alignr}Total: ${totalup eth0}
+${color }NETWORK (${addr enp2s0}) ${hr 2}$color
+Down: ${downspeed enp2s0}/s ${alignr}Up: ${upspeed enp2s0}/s
+${downspeedgraph enp2s0 25,140 000000 ff0000} ${alignr}${upspeedgraph enp2s0 25,140 000000 00ff00}
+Total: ${totaldown enp2s0} ${alignr}Total: ${totalup enp2s0}
 ${color red}Listening ports:$color
-${texeci 10 netstat -tulpen4 | egrep "tcp|udp" | grep LISTEN | sed -e 's/:/ /' -e 's/0\.0\.0\.0/ALL/' -e 's/192\.168\.1\.[0-9]*/LAN/' -e 's/127.0.0.1/LO/' -e 's/LISTEN//' | awk '{print "  " $5 "/" $1 "-" $4 "\t by " $9}' | sort -n }
+${texeci 10 netstat -tulpen4 | egrep "tcp|udp" | grep LISTEN | sed -e 's/:/ /' -e 's/0\.0\.0\.0/ALL/' -e 's/192\.168\.1\.[0-9]*/LAN/' -e 's/127.0.0.1/LO/' -e 's/LISTEN//' | awk '{print "  " $5 "/" $1 "-" $4 "\t\t by " $9}' | sort -n }
+#${execigraph 1 "/home/asmageddon/dotfiles/.scripts/one_ping" -l}
+#${execi 1 zsh ~/dotfiles/.scripts/one_ping}
 #${color }RANDOM WORDS${hr 2}$color
 #${texeci 300 python ~/Dokumenty/randomword.py}
 #
-${execgraph -l -t zsh ~/dotfiles/.scripts/one_ping 00ff00}
+#${execigraph 1 -l "bash ~/dotfiles/.scripts/one_ping"}

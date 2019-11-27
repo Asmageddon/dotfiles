@@ -1,6 +1,8 @@
-source ~/.shrc
-source ~/.promptrc
-source ~/.termtitle
+export DOTFILES_DIR=$(cat "$HOME/.dotfilesrc")
+
+source $DOTFILES_DIR/shell/.shrc
+source $DOTFILES_DIR/shell/.promptrc
+source $DOTFILES_DIR/shell/.termtitle
 
 #Ignore minor spelling errors
 shopt -s cdspell

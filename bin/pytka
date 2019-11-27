@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+
+from pprint import pprint
+import tkinter as tk
+import time
+
+
+# Line 1, columns 2,4,5 (system, user, idle) - add up to 100%
+# user, nice, system, idle, iowait(ignore?), irq, softirq, steal(host system), guest(vm), guest_nice
+# mpstat is recommended instead
+# user+nice+system+irq+softirq+guest+guest_nice (ignore steal, iowait, idle)
+
+# ps -e -o %cpu
+
+
+# w, h = 800, 500
+
+# canvas = tk.Canvas(root, width=w, height=h, highlightthickness=0)
+# # ...
+# # Do your things in your canvas
+# # ...
+
+# canvas.pack(fill='both')
+
+# sxhkdrc
+# super + button1
+    # echo 3.0 > /tmp/speedhack_pipe
+# super + @button1
+    # echo 1.0 > /tmp/speedhack_pipe
+# @button1
+    # echo 1.0 > /tmp/speedhack_pipe
+
+class App():
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.overrideredirect(True) #Remove border
+        # root.title("app")
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        self.root.geometry("200x3+%d+%d" % (0, screen_height-3))
+        self.root.configure(background='red')
+        self.root.lift()
+
+        self.statfile = open("/proc/stat", 'r')
+        self.last_time = 0
+        self.last_usage = None
+        self.cpu_usage = 0
+
+        self.canvas = tk.Canvas(self.root, bd=0, highlightthickness=0, relief='ridge', borderwidth=0, selectborderwidth=0, insertwidth=0)
+        #pprint(self.canvas.config())
+        self.canvas.pack(fill=tk.BOTH, expand=1)
+
+
+        self.root.bind("<Button-2>", self.onclick)
+        self.tick()
+
+        tk.mainloop()
+
+    def onclick(self, event):
+        self.root.destroy()
+
+    def tick(self):
+        current_time = time.time()
+
+        self.statfile.seek(0)
+        usage = list(map(int, self.statfile.readline().split()[1:]))
+
+        # WIP: Multiple CPUs
+        self.statfile.seek(0); lines = self.statfile.readlines()
+        cpus = [ [int(field) for field in line.split()[1:]] for line in lines[1:] if line.startswith("cpu") ]
+        # pprint(cpus)
+
+        if self.last_usage is not None:
+            ud = usage_delta = list(a-b for a,b in list(zip(usage, self.last_usage)))
+
+            busy = ud[0]+ud[1]+ud[2]+ud[5]+ud[6]+ud[8]+ud[9]
+            total = sum(ud)
+            self.cpu_usage = busy / total
+        self.last_time = current_time
+        self.last_usage = usage
+        self.root.after(1000, self.tick)
+
+        self.render()
+
+    def render(self):
+        self.canvas.create_rectangle(0, 0, 200, 3, fill="#fff", width=0) # Background
+        self.canvas.create_rectangle(199, 0, 200, 3, fill="#000", width=0) # Right border
+        self.canvas.create_rectangle(0, 0, 200, 1, fill="#000", width=0) # Top border
+        self.canvas.create_rectangle(0, 1, int(self.cpu_usage * 200), 3, fill="#f00", width=0) # Usage
+        # self.canvas.create_rectangle(0, 0, int(self.cpu_usage * 200), 1, fill="#800", width=0) # Top border (usage)
+
+app = App()

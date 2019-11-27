@@ -1,67 +1,127 @@
 
 if [[ ! -n $SHELL_CHECK ]] ; then
-    source ~/.shvars
+    source $DOTFILES_DIR/.shvars
     #Pull $TEXT_USERNAME, $TEXT_HOSTNAME and $TEXT_WORKING_DIRECTORY (and everything else along the way :3)
 fi
 
+function setup_prompt() {
+    local C_DECOR_1=$C_RED
+    local C_DECOR_2=$C_NONE$C_PURPLE #Have to add a C_NONE so it doesn't get the bold effect from the previous element
+    local C_DIRECTORY=$E_BOLD$C_GREEN
+    local NC=$C_NONE # No Color
+    #Hostname color, yellow for remote, blue otherwise
+    local C_HOSTNAME=$E_BOLD$C_GREEN
+    TEXT_DIRTYPE=""
+    if [ -n "$SSH_CONNECTION" ] ; then
+        C_HOSTNAME=$E_BOLD$C_YELLOW
+    fi
+    local C_USERNAME=$C_GREEN
 
-_COLOR_DECORATION1=$C_RED
-_COLOR_DECORATION2=$C_NONE$C_PURPLE #Have to add a C_NONE so it doesn't get the bold effect from the previous element
-_COLOR_DIRECTORY=$E_BOLD$C_GREEN
-_COLOR_SHELL=$E_BOLD$C_RED
-NC=$C_NONE # No Color
+    #Username color, red for root, green otherwise
+    if [[ "$UID" == 0 ]] ; then
+        C_USERNAME=$C_RED
+        USR_SYMBOL="#"
+    else
+        C_USERNAME=$C_GREEN
+        USR_SYMBOL="$"
+    fi
 
-#Username color, red for root, green otherwise
-if [[ "$UID" == 0 ]] ; then
-    _COLOR_USERNAME=$C_RED
-else
-    _COLOR_USERNAME=$C_GREEN
-fi
+    if [[ $LL_PROMPT_SYMBOL != 1 ]] ; then
+        USR_SYMBOL=">"
+    fi
 
-#Hostname color, yellow for remote, blue otherwise
-if [ -n "$SSH_CONNECTION" ] ; then
-    # We're logged in remotely
-    _COLOR_HOSTNAME=$E_BOLD$C_YELLOW
-else
-    _COLOR_HOSTNAME=$E_BOLD$C_BLUE
-fi
 
-_TEXT_FRAME1="["
-_TEXT_FRAME2="]"
-_TEXT_IN=" in "
-if [ -n "$UNICODE_SUPPORT" ] ; then
-    _TEXT_AT='❤'
-    _DECOR_FRAME1="╔"
-    _DECOR_FRAME2="╚═> "
-    _DECOR_FRAME3="  > "
-    _DECOR_CHAR_ADDITIONAL="═"
-else
-    _TEXT_AT='@'
-    _DECOR_FRAME1="┌"
-    _DECOR_FRAME2="└─> "
-    _DECOR_FRAME3="  > "
-    _DECOR_CHAR_ADDITIONAL="─"
-fi
+    # TODO: "$" for normal user, "#" for root
 
-#Display visually which shell level we are in,
-#   not because you need to know, but so you at
-#   least can differentiate commands launched in
-#   other shells and know when exitting won't log you out
-_SHLVL=$SHLVL
-while [[ $_SHLVL > 1 ]] ; do
-    _DECOR_FRAME1=$_DECOR_FRAME1$_DECOR_CHAR_ADDITIONAL;
-    _SHLVL=$(($_SHLVL-1))
-done
+    _TEXT_FRAME1="["
+    _TEXT_FRAME2="]"
+    _TEXT_IN=" in "
+    if [ -n "$UNICODE_SUPPORT" ] ; then
+        _TEXT_AT='❤'
+        _DECOR_FRAME1="╔"
+        _DECOR_FRAME2="╚═$USR_SYMBOL "
+        _DECOR_FRAME3="  > "
+        _DECOR_CHAR_ADDITIONAL="═"
+    else
+        _TEXT_AT='@'
+        _DECOR_FRAME1="┌"
+        _DECOR_FRAME2="└─$USR_SYMBOL "
+        _DECOR_FRAME3="  > "
+        _DECOR_CHAR_ADDITIONAL="─"
+    fi
 
-if [[ ! -n $NO_SET_PROMPT ]] ; then
-    PS1="$_DECOR_FRAME1\
-$(echo $_COLOR_DECORATION2)$_TEXT_FRAME1\
-$(echo $_COLOR_USERNAME)$TEXT_USERNAME\
-$(echo $_COLOR_DECORATION1)$_TEXT_AT\
-$(echo $_COLOR_HOSTNAME)$TEXT_HOSTNAME\
-$(echo $_COLOR_DECORATION2)$_TEXT_FRAME2\
-$(echo $NC)$_TEXT_IN\
-$(echo $_COLOR_DIRECTORY)$TEXT_WORKING_DIRECTORY$(echo $NC)
+    #Display visually which shell level we are in,
+    #   not because you need to know, but so you at
+    #   least can differentiate commands launched in
+    #   other shells and know when exitting won't log you out
+    _SHLVL=$SHLVL
+    while [[ $_SHLVL > 1 ]] ; do
+        _DECOR_FRAME1=$_DECOR_FRAME1$_DECOR_CHAR_ADDITIONAL;
+        _SHLVL=$(($_SHLVL-1))
+    done
+
+    C_DECOR_2="$C_NONE"
+    C_DECOR_1="$C_NONE"
+
+    if [[ $SHELL_CHECK == "zsh" && $LL_TIMESTAP == 1 ]] ; then
+        if [[ $LL_12H_TIME == 1 ]] ; then
+            TIMESTAMP='%D{%L:%M:%S %p}'
+        else
+            TIMESTAMP='%D{%H:%M:%S}'
+        fi
+        if [[ $LL_TIME_IN_PS1 == 1 ]] ; then
+            #_TEXT_TIME="$C_DECOR_2[$NC$TIMESTAMP$C_DECOR_2]$NC$_DECOR_CHAR_ADDITIONAL"
+            _TEXT_TIME="[$TIMESTAMP]$_DECOR_CHAR_ADDITIONAL"
+        else
+            RPROMPT="[$TIMESTAMP]"
+        fi
+        TRAPALRM() {
+            # There are other values, but only "complete-word" appears to cause a crash
+            # Just in case here's an alternative line: if [ "$WIDGET" = "expand-or-complete" ] && [[ "$_lastcomp[insert]" =~ "^automenu$|^menu:" ]]
+            if [[ "$WIDGET" != "complete-word" && "$WIDGET" != "expand-or-complete"
+              && $WIDGET != "history-incremental-search-backward"
+              && $WIDGET != "history-incremental-search-forward"
+            ]]; then
+                zle reset-prompt
+            fi
+        }
+        TMOUT=1
+    fi
+
+    # This is WIP
+    chpwd() {
+        TEXT_DIRTYPE=""
+        local owner=$(/bin/ls -do . | awk '{print $3}') # -l instead of -o to list group info as well
+        local perm=$(/bin/ls -do . | awk '{print $1}') # -l instead of -o to list group info as well
+        if [[ $owner != $USER ]] ; then
+            TEXT_DIRTYPE="$TEXT_DIRTYPE U:$owner"
+        fi
+        if [[ -n $(git -C /home/asmageddon/Workspace/git/ rev-parse 2>&1) ]] ; then
+            TEXT_DIRTYPE="$TEXT_DIRTYPE git"
+        fi
+
+        if [[ TEXT_DIRTYPE != "" ]] ; then
+            export TEXT_DIRTYPE=" [$TEXT_DIRTYPE]"
+        fi
+    }
+
+    if [[ $LL_CUSTOM_PROMPT == 1 ]] ; then
+        PS1="$_DECOR_FRAME1\
+$_TEXT_TIME\
+%{$C_DECOR_2%}$_TEXT_FRAME1\
+%{$C_USERNAME%}$TEXT_USERNAME\
+%{$C_DECOR_1%}$_TEXT_AT\
+%{$C_HOSTNAME%}$TEXT_HOSTNAME\
+%{$C_DECOR_2%}$_TEXT_FRAME2\
+%{$NC%}$_TEXT_IN\
+%{$C_DIRECTORY%}$TEXT_WORKING_DIRECTORY%{$NC%}\$TEXT_DIRTYPE
 $_DECOR_FRAME2"
-    PS2="$_DECOR_FRAME3"
-fi
+        PS2="$_DECOR_FRAME3"
+    fi
+
+    #C_RED=$'\e[31m'
+    #C_NONE=$'\e[0m'
+    #PS1="%{$C_RED%}%{$C_RED%}%{$C_RED%}%{$C_RED%}%{$C_RED%}%{$C_RED%}%{$C_RED%} %~ >> %{$C_NONE%}"
+}
+
+setup_prompt

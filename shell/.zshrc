@@ -1,6 +1,8 @@
-source ~/.shrc
-source ~/.promptrc
-source ~/.termtitle
+export DOTFILES_DIR=$(cat "$HOME/.dotfilesrc")
+
+source $DOTFILES_DIR/shell/.shrc
+source $DOTFILES_DIR/shell/.promptrc
+source $DOTFILES_DIR/shell/.termtitle
 
 HISTFILE=~/.histfile
 HISTSIZE=500
@@ -9,6 +11,9 @@ SAVEHIST=25000
 #Do not overwrite history file so two parallel shells
 # don't overwrite each other's history
 setopt appendhistory
+
+# Substitute $ sequences in the prompt, each time it is invoked
+setopt prompt_subst
 
 #Ignore duplicate lines
 setopt hist_ignore_all_dups
@@ -23,7 +28,7 @@ setopt ignorebraces
 
 unsetopt beep
 
-zstyle :compinstall filename '/home/asmageddon/.zshrc'
+zstyle :compinstall filename '$HOME/.zshrc'
 
 autoload -Uz compinit && compinit
 

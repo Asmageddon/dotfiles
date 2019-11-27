@@ -1,0 +1,77 @@
+#!/bin/bash
+
+count_process() {
+    ps -ef | grep "$1$" | wc -l
+}
+
+update_ping() {
+    if [[ $1 != "" ]] ; then
+        local IP=$1
+    else
+        local IP="8.8.8.8"
+    fi
+
+    # Warning: This relies on bash's echo concatenating multiline variables into a single line, it won't work elsewhere
+    while [[ $(count_process tmux) > 1 ]] ; do
+        local PING=$(/bin/ping $IP -c 1 -W 3)
+
+        if [[ $? != 0 ]] ; then
+            echo $?
+            tmux setenv -g TMUX_PING "DOWN";
+        else
+            #PING=$(echo $PING | sed -ru 's/.*time=//;s/ms.*/ms/')
+            #PING=$(echo $PING | sed -ru 's/.*time=//;s/\..*/ms/')
+            PING=$(echo $PING | grep "time=" | sed -ru 's/.*time=//;s/ms.*//')
+            #PING=$(echo $PING | sed -ru 's/.*time=([0-9]+).*/\1ms/')
+            #if [[ $(echo $PING | wc -c) > 30 ]] ; then
+                ##PING="DOWN"
+                #PING=$(echo $PING | wc -c)
+            #fi
+            echo $PING > ~/.tmux_ping
+            tmux setenv -g TMUX_PING "$PING";
+        fi
+
+
+        local MEM=$(free -m | awk '/Mem/ {printf "%.1f+", ($7 / 1024)} /Swap/ {printf "%.1fG", ($4/1024)}')
+        tmux setenv -g TMUX_MEMORY "$MEM";
+
+        sleep 0.5
+    done
+}
+
+calculate() {
+    if [[ $NET_CALCING == "true" ]] ; then
+        return
+    else
+        local DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+        while [[ $(count_process tmux) > 1 ]] ; do
+            #Get interface used to connect to the internet
+            local IF=$(awk 'NR==3 {print $1}' /proc/net/route)
+
+            #Calculate delta of downloaded bytes in 1 second duration
+            local TXB=$(</sys/class/net/$IF/statistics/tx_bytes)
+            local RXB=$(</sys/class/net/$IF/statistics/rx_bytes)
+            sleep 1
+            local TXBN=$(</sys/class/net/$IF/statistics/tx_bytes)
+            local RXBN=$(</sys/class/net/$IF/statistics/rx_bytes)
+
+            if [[ $(tmux showenv -g TMUX_PING) == "TMUX_PING=DOWN" ]] ; then
+                tmux setenv -g TMUX_UPSPEED "-"
+                tmux setenv -g TMUX_DOWNSPEED "-"
+            else
+                tmux setenv -g TMUX_UPSPEED "$(((TXBN - TXB) / 1024))" #Unit is KiB
+                tmux setenv -g TMUX_DOWNSPEED "$(((RXBN - RXB) / 1024))" #Unit is KiB
+            fi
+        done
+    fi
+}
+
+# TODO: Kill other tmux_network_usage processes instead
+#Do not launch multiple copies
+if [[ $(count_process tmux_network_usage) < 5 ]] ; then
+    tmux setenv -g TMUX_UPSPEED "0"
+    tmux setenv -g TMUX_DOWNSPEED "0"
+    update_ping 8.8.8.8 &
+    calculate
+fi

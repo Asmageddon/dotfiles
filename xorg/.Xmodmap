@@ -1,3 +1,5 @@
+!Use scroll lock as Play/Pause. What other use has it got?
+keycode 78 = XF86AudioPlay
 keycode 172 = XF86AudioPlay
 keycode 174 = XF86AudioStop
 keycode 121 = XF86AudioMute

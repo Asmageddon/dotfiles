@@ -212,7 +212,8 @@ toggle() {
 }
 
 CPU_HOGS="conky tmux_network_us"
-CPU_HOGS="$CPU_HOGS opera-next chromium firefox luakit"
+CPU_HOGS="$CPU_HOGS chromium firefox firefox-esr epiphany-browser"
+CPU_HOGS="$CPU_HOGS steam rambox dropbox"
 CPU_HOGS="$CPU_HOGS apt-get dpkg rred"
 
 hogs() {
@@ -234,3 +235,63 @@ remount() {
 url_encode() {
     echo $1 | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g; s/'"'"'/\&#39;/g'
 }
+
+#TODO: multiless
+
+multiless() {
+    find -L . -maxdepth 1 -type f | sed s:\./::g | xargs -0r echo | less
+}
+
+b() {
+    nohup "$@" > /dev/null &
+}
+
+# /dev/disk/* # Volumes listed by various shits
+# ls -l /dev/disk/by-label/ #
+# findmnt - filesystem mountpoint structure
+# cat /proc/mounts | grep "/dev/sd" | grep "/media/" # Alternatively, /etc/mtab - for mounts managed by mount/umount
+# PID = lsof -t /media/volume; ps -q $PID -o pid=,comm= # Warning actually there's likely to be many pids
+
+# Print list of processes using each of the given volumes
+function open_in() {
+    for VOLUME in "$@" ; do
+        local DONE=""
+        for PID in $(lsof -t $VOLUME) ; do
+            if [[ $DONE == "" ]] ; then
+                printf "'%s' is in use by: \n" "$VOLUME"
+                DONE="yes"
+            fi
+            ps -q $PID -o pid:6=,user:16=,comm= | awk '{print "    "$0}'
+        done
+    done
+}
+
+# Print list of processes using each of every volume mounted in /media
+volume_use() {
+    local MOUNTPOINTS=`cat /proc/mounts | grep "/dev/sd" | grep "/media/" | awk '{print $2}'`
+    while read -r vol; do
+        open_in "$(echo -e $vol)"
+    done <<< "$MOUNTPOINTS"
+}
+
+# Launch a program completely detached from the current shell
+launch() {
+    setsid $@ >/dev/null 2>&1 < /dev/null &
+}
+
+run() {
+    # TODO: Check if the command is available with which and PWD file check
+    if ! pgrep -f $1 ; then
+        echo "Launching: '$@'"
+        launch $@
+    else
+        echo "Already running: '$1' ('$@')"
+    fi
+}
+
+brightness() {
+    local DISPLAY_OUTPUT=$(xrandr -q | grep ' connected' | head -n 1 | cut -d ' ' -f1)
+    xrandr --output "$DISPLAY_OUTPUT" --brightness $1
+}
+
+function join_by { local d=$1; shift; echo -n "$1"; shift; printf "%s" "${@/#/$d}"; }

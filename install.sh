@@ -69,18 +69,21 @@ install_files() {
     local TARGET_DIR=$3 # .config/geany/colorschemes
     local BACKUP_DIR=$4
 
-    echo "Installing files from $PWD/$SOURCE_DIR to $installation_dir/$TARGET_DIR"
+    echo "Installing files from $DIR/$SOURCE_DIR to $installation_dir/$TARGET_DIR"
 
     if [[ $FILES == "" ]] ; then
-        FILES=$(ls -A "$PWD/$SOURCE_DIR")
+        FILES=$(ls -A "$DIR/$SOURCE_DIR")
     fi
 
     if [[ ! -d "$installation_dir/$TARGET_DIR/" ]] ; then
         mkdir -p "$installation_dir/$TARGET_DIR/"
     fi
+    if [[ ! -d "$installation_dir/$BACKUP_DIR/" ]] ; then
+        mkdir -p "$installation_dir/$BACKUP_DIR/"
+    fi
 
     for file in $FILES ; do
-        SOURCE="$PWD/$SOURCE_DIR/$file";
+        SOURCE="$DIR/$SOURCE_DIR/$file";
         TARGET="$installation_dir/$TARGET_DIR/$file";
         BACKUP="$installation_dir/.rcbackup/$BACKUP_DIR";
 
@@ -88,21 +91,30 @@ install_files() {
     done
 }
 
+echo "$DIR" > "$installation_dir/.dotfilesrc"
 
 # Shell config files
-install_files "shell" ".aliases .bashrc .promptrc .shvars .zshrc .bash_profile .functions .shrc .termtitle" "" ""
+#install_files "shell" ".aliases .bashrc .promptrc .shvars .zshrc .bash_profile .functions .shrc .termtitle" "" ""
+install_files "shell" ".bashrc .zshrc .bash_profile" "" "" # TODO: Store .dotfilesrc containing path to dotfiles folder
 
 # Miscellanous files
-install_files "" ".tmux.conf .conkyrc yaourtrc" "" ""
+install_files "" ".tmux.conf .conkyrc .gitconfig" "" "" # No yaourtrc as I'm not using Arch
+
 
 # Scripts
-install_files ".scripts" "" ".scripts" ".scripts"
+#install_files ".scripts" "" ".scripts" ".scripts" - made obsolete
 
+install_files "bin" "" ".local/bin" "bin"
+
+### Program configs
 # Geany themes
 install_files "other/geany-themes" "" ".config/geany/colorschemes" "geany-themes"
+# Redshift
+install_files "other" "redshift.conf" ".config"
 
 # Python stuff
 install_files "other/python" ".pythonrc" "" ""
+
 
 # X.Org files - locale, themes, fonts
 install_files "xorg" "" "" ""

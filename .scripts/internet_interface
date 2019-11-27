@@ -1,6 +1,0 @@
-#!/bin/bash
-
-#Get interface used to connect to the internet
-INTERNET_INTERFACE=$(awk 'NR==3 {print $1}' /proc/net/route)
-
-echo $INTERNET_INTERFACE

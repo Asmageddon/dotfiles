@@ -1,0 +1,23 @@
+#!/bin/bash
+
+if [[ $(which ffmpeg | awk '{print $2}') == "not" ]] ; then
+    echo "You need to install ffmpeg to use this script"
+else
+    NR=1
+    for FILE_IN in "$@" ; do
+        echo -n "$NR/$#. Converting $FILE_IN..."
+        NR=$((NR + 1))
+        time_start=$SECONDS
+
+        FILE_NO_EXT="${FILE_IN%.*}"
+        BASENAME="${FILE_NO_EXT##*/}"
+        FILE_OUT="$BASENAME.mkv"
+        FILE_IMG="$BASENAME.png"
+        ffmpeg -loglevel panic -y -i "$FILE_IN" "$FILE_IMG"
+        ffmpeg -loglevel panic -n -i "$FILE_IN" -loop 1 -i "$FILE_IMG" -c:a copy -c:v libx264 -shortest -tune stillimage -r 6 -preset ultrafast -vf scale=-2:720 "$FILE_OUT"
+        rm "$FILE_IMG"
+
+        time_end=$SECONDS
+        echo " done! (took $((time_end - time_start))s)"
+    done
+fi

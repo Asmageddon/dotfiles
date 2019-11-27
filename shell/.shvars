@@ -53,27 +53,27 @@ fi
 if   [[ $TERM == *xterm* ]] ; then
     #The xterm family, most terminals fall under this category
     #xterm, xterm-256color, xterm-color, xterm-debian, color-xterm
-    COLOR_SUPPORT="1"
+    COLOR_SUPPORT=1
 elif [[ $TERM == rxvt* ]] ; then
     #The rxvt family
     #rxvt, rxvt-cygwin, rxvt-cygwin-native, rxvt-unicode, rxvt-256color
-    COLOR_SUPPORT="1"
+    COLOR_SUPPORT=1
 elif [[ $TERM == screen* ]] ; then
     #Screen(s), tmux also says he's a screen
     #screen, screen-bce, screen-w, screen.linux
-    COLOR_SUPPORT="1"
+    COLOR_SUPPORT=1
 elif [[ $TERM == con132* ]] ; then
     #No idea what these are, to be honest I just pulled this list from the internet
     #con132x25, con132x30, con132x43, con132x60
-    COLOR_SUPPORT="1"
+    COLOR_SUPPORT=1
 elif [[ $TERM == con80* ]] ; then
     #con80x25, con80x28, con80x30, con80x43, con80x50, con80x60
-    COLOR_SUPPORT="1"
+    COLOR_SUPPORT=1
 else
     #Everything else that supposedly supports color
     for other in ansi cons25 console cygwin dtterm Eterm gnome konsole kterm linux linux-c mach-color putty vt100; do
         if [[ $TERM == $other ]] ; then
-            COLOR_SUPPORT="1";
+            COLOR_SUPPORT=1;
         fi
     done
 fi
@@ -120,29 +120,47 @@ fi
 
 
 #Colors for zsh and bash, only set if the terminal supports them
-if [[ -n $COLOR_SUPPORT ]] ; then
-    C_RED='\e[31m'
-    C_GREEN='\e[32m'
-    C_YELLOW='\e[33m'
-    C_BLUE='\e[34m'
-    C_PURPLE='\e[35m'
-    C_CYAN='\e[36m'
-    C_GRAY='\e[37m'
-    C_WHITE='\e[38m'
-    C_NONE='\e[0m'
+if [[ $COLOR_SUPPORT == 1 && $LL_COLOR == 1 ]] ; then
+    C_RED=$'\033[31m'
+    C_GREEN=$'\033[32m'
+    C_YELLOW=$'\033[33m'
+    C_BLUE=$'\033[34m'
+    C_PURPLE=$'\033[35m'
+    C_CYAN=$'\033[36m'
+    C_GRAY=$'\033[37m'
+    C_WHITE=$'\033[38m'
+    C_NONE=$'\033[0m'
 
-    C_BG_RED='\e[41m'
-    C_BG_GREEN='\e[42m'
-    C_BG_YELLOW='\e[43m'
-    C_BG_BLUE='\e[44m'
-    C_BG_PURPLE='\e[45m'
-    C_BG_CYAN='\e[46m'
-    C_BG_GRAY='\e[47m'
-    C_BG_WHITE='\e[48m'
+    C_BG_RED=$'\033[41m'
+    C_BG_GREEN=$'\033[42m'
+    C_BG_YELLOW=$'\033[43m'
+    C_BG_BLUE=$'\033[44m'
+    C_BG_PURPLE=$'\033[45m'
+    C_BG_CYAN=$'\033[46m'
+    C_BG_GRAY=$'\033[47m'
+    C_BG_WHITE=$'\033[48m'
 
-    E_BOLD='\e[1m'
-    E_CURSIVE='\e[3m'
-    E_UNDERLINE='\e[4m'
-    E_BLINK='\e[5m'
-    E_INVERT='\e[7m'
+    E_BOLD=$'\033[1m'
+    E_CURSIVE=$'\033[3m'
+    E_UNDERLINE=$'\033[4m'
+    E_BLINK=$'\033[5m'
+    E_INVERT=$'\033[7m'
 fi
+
+# Other escape sequences:
+M_UP1='\e[1A'
+M_DOWN1='\e[1B'
+
+# $# - arg count, $@ - all args, $1-9 args
+
+# ESC[#;#H or ESC[#;#f 	moves cursor to line #, column #
+# ESC[#A 	moves cursor up # lines
+# ESC[#B 	moves cursor down # lines
+# ESC[#C 	moves cursor right # spaces
+# ESC[#D 	moves cursor left # spaces
+# ESC[#;#R 	reports current cursor line & column
+# ESC[s 	save cursor position for recall later
+# ESC[u 	Return to saved cursor position
+# erase functions
+# ESC[2J 	clear screen and home cursor
+# ESC[K 	clear to end of line

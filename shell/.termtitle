@@ -1,14 +1,4 @@
-source ~/.shvars
-
-if [[ ! -n $TEXT_USERNAME ]] ; then
-    NO_SET_PROMPT="yeah"
-        source ~/.promptrc
-    NO_SET_PROMPT=""
-fi
-
-
-
-if [[ -n $TITLEBAR_SUPPORT ]] ; then
+if [[ $TITLEBAR_SUPPORT == 1 && $LL_TERMTITLE == 1 ]] ; then
     if [ -n "$SSH_CONNECTION" ] ; then
         #Remote login, display all
         SET_TERMINAL_TITLE="\e]0;$TEXT_USERNAME$TEXT_AT$TEXT_HOSTNAME: $TEXT_WORKING_DIRECTORY\a"
@@ -20,6 +10,9 @@ if [[ -n $TITLEBAR_SUPPORT ]] ; then
             #Different user, localhost - display username and directory
             SET_TERMINAL_TITLE="\e]0;$TEXT_USERNAME: $TEXT_WORKING_DIRECTORY\a"
         fi
+    fi
+    if [[ $SHELL_CHECK == "zsh" ]] ; then
+        SET_TERMINAL_TITLE="%{$SET_TERMINAL_TITLE%}"
     fi
 
     #IMPORTANT: $PS1 __MUST__ be placed after that command because escape sequences on last line of multiline prompt weird it out
@@ -34,7 +27,7 @@ if [[ -n $TITLEBAR_SUPPORT ]] ; then
         }
     elif [[ $SHELL_CHECK == "bash" ]] ; then
         set -o functrace;
-        #For some reason this doesn't work on my system anymore...
+        # FIXME: For some reason this doesn't work on my system anymore...
         trap 'echo -ne "\e]0;$ORIG_TITLE$BASH_COMMAND\a"' DEBUG;
     fi
 fi

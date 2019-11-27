@@ -1,5 +1,30 @@
-source ~/.aliases
-source ~/.functions
+# Config of my dotfiles
+
+# Set a custom prompt?
+LL_CUSTOM_PROMPT=1
+# Enable color in prompt?
+LL_COLOR=1
+# Enable terminal title setting?
+LL_TERMTITLE=1
+# Classical # and $ symbol instead of > on prompt?
+LL_PROMPT_SYMBOL=0
+
+# Show dynamically updating timestamp in prompt?
+LL_TIMESTAP=1
+# Show timestamp in PS1? Otherwise, RPROMPT
+LL_TIME_IN_PS1=1
+# Show timestamp in 12h clock instead of 24h clock?
+LL_12H_TIME=0
+
+# free -m | awk '/Mem/ {printf "RAM: %.1f%%", (100*($2-$7) / $2)} /Swap/ {printf " SWP: %.1f%%", (100* $3 / $2)}'
+# free -m | awk '/Mem/ {printf "Free: %.1f+", ($7 / 1024)} /Swap/ {printf "%.1f GiB", ($4/1024)}'
+
+source $DOTFILES_DIR/shell/.shvars
+source $DOTFILES_DIR/shell/.aliases
+source $DOTFILES_DIR/shell/.functions
+
+# For bash
+HISTTIMEFORMAT='%y.%m.%d %T  '
 
 if [[ -z $__LOCAL_BIN_IN_PATH ]] ; then
     export __LOCAL_BIN_IN_PATH="TRUE"
@@ -20,6 +45,7 @@ if [[ $TERM != *screen* ]] ; then
         COMMAND="screen";
     fi
 
+    echo $COMMAND
     if [[ -n $SSH_CONNECTION ]] ; then
         exec $COMMAND;
     elif [[ $TERM == "linux" ]] ; then

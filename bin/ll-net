@@ -1,0 +1,80 @@
+#!/bin/bash
+
+llnet_interface() {
+    #Get interface used to connect to the internet
+    echo $(awk 'NR==3 {print $1}' /proc/net/route)
+}
+
+llnet_upspeed() {
+    local IF=$(llnet_interface)
+    if [[ $1 != "" ]] ; then
+        local IF="$1"
+    fi
+
+    #Calculate delta of uploaded bytes in 1 second duration
+    local TXB=$(</sys/class/net/$IF/statistics/tx_bytes)
+    sleep 1
+    local TXBN=$(</sys/class/net/$IF/statistics/tx_bytes)
+    local TXDIF=$(echo $((TXBN - TXB)) )
+
+    echo -e "$((TXDIF / 1024))" #Unit is KiB
+}
+
+llnet_downspeed() {
+    local IF=$(llnet_interface)
+    if [[ $1 != "" ]] ; then
+        local IF="$1"
+    fi
+
+    #Calculate delta of uploaded bytes in 1 second duration
+    local RXB=$(</sys/class/net/$IF/statistics/rx_bytes)
+    sleep 1
+    local RXBN=$(</sys/class/net/$IF/statistics/rx_bytes)
+    local RXDIF=$(echo $((RXBN - RXB)) )
+
+    echo -e "$((RXDIF / 1024))" #Unit is KiB
+}
+
+llnet_speed() {
+    local IF=$(llnet_interface)
+    if [[ $1 != "" ]] ; then
+        local IF="$1"
+    fi
+
+    #Calculate delta of uploaded bytes in 1 second duration
+    local TXB=$(</sys/class/net/$IF/statistics/tx_bytes)
+    local RXB=$(</sys/class/net/$IF/statistics/rx_bytes)
+    sleep 1
+    local TXBN=$(</sys/class/net/$IF/statistics/tx_bytes)
+    local RXBN=$(</sys/class/net/$IF/statistics/rx_bytes)
+    local TXDIF=$(echo $((TXBN - TXB)) )
+    local RXDIF=$(echo $((RXBN - RXB)) )
+
+    echo -e "$((RXDIF / 1024)) $((TXDIF / 1024))" #Unit is KiB
+}
+
+llnet_ping() {
+    local IP="$1"
+    if [[ $IP == "" ]] ; then
+        local IP="8.8.8.8"
+    fi
+    local PING=$(/bin/ping $IP -c 1 -W 3)
+    if [[ $? != 0 ]] ; then
+        echo '0'
+    else
+        local PING=$(echo $PING | grep "time=" | sed -ru 's/.*time=//;s/ms.*//')
+        echo $PING
+    fi
+}
+
+if [[ $1 == "interface" ]] ; then
+    llnet_interface
+elif [[ $1 == "upspeed" ]] ; then
+    llnet_upspeed $2
+elif [[ $1 == "downspeed" ]] ; then
+    llnet_downspeed $2
+elif [[ $1 == "speed" ]] ; then
+    llnet_speed $2
+elif [[ $1 == "ping" ]] ; then
+    llnet_ping $2
+fi

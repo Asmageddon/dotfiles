@@ -1,5 +1,3 @@
-source ~/.shvars
-
 alias grep='grep --color=auto'
 alias ls='ls -Ah --color=force'
 
@@ -14,23 +12,18 @@ alias ssh='ssh -CX'
 
 alias less='less -R'
 
-alias yaourt='yaourt --noconfirm'
-alias yogurt='sudo yaourt --noconfirm'
-alias milkshake='yaourt -Ss'
-
-alias screenshot="scrot $HOME/'%Y.%m.%d @ %H:%M:%S \\($wx\$h\\).png' -e 'nice -n 20 optipng \"\$f\"; mv \"\$f\" ~/Pictures/screenshots'"
-alias sc='screenshot'
-
 alias servedir='python -m SimpleHTTPServer 9321'
 
 alias mplayer='mplayer -ass -embeddedfonts -ass-line-spacing 0 -vo xv -dr -sub-fuzziness 1 -alang eng -af-add volnorm >/dev/null -framedrop'
 
-alias lss='ls -lctr'
+alias lss='ls -lctr' # Long listing format, sort by modification time, reverse sort(latest first), by modification time
 
 if [[ $SHELL_CHECK == "zsh" ]] ; then
     alias reload='source ~/.zshrc';
 elif [[ $SHELL_CHECK == "bash" ]] ; then
     alias reload='source ~/.bashrc';
 fi
+
+alias xev-kb="xev | grep -A2 --line-buffered '^KeyRelease' | sed -n '/keycode /s/^.*keycode \([0-9]*\).* (.*, \(.*\)).*$/\1 \2/p'"
 
 alias randdir='python -c "import random, os; print(random.choice(os.listdir(\".\")))"'

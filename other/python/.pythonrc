@@ -65,7 +65,7 @@ if __in_ipython:
         text = str(eval(expr))
         if text is not None:
             clipboard(text)
-            print "Copied to clipboard!"
+            print("Copied to clipboard!")
         else:
             raise ValueError("Global value '%s' not found" % var_name)
 
