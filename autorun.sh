@@ -4,7 +4,7 @@ launch() {
     setsid $@ >/dev/null 2>&1 < /dev/null &
 }
 
-run {
+run() {
   if ! pgrep -f $1 ; then
     echo "Launching: '$@'"
     launch $@
