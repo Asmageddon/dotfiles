@@ -8,9 +8,9 @@
 #[ -d $targetbase ] || exit 1
 #import -window root -quality 98 $targetbase/$timestamp.png
 
-if [[ $(which flameshot | awk '{print $2}') != "not" ]] ; then
+if [[ $(command -v flameshot) != "" ]] ; then
     flameshot gui --delay 200
-else if [[ $(which scrot | awk '{print $2'}) != "not" ]] ; then
+elif [[ $(command -v scrot) != "" ]] ; then
     CMDS='nice -n 20 optipng "$f"'
     CMDS=$CMDS';mv "$f" ~/Pictures/screenshots'
 

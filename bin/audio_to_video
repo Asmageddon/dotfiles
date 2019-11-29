@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ $(which ffmpeg | awk '{print $2}') == "not" ]] ; then
+if [[ $(command -v ffmpeg) != "" ]] ; then
     echo "You need to install ffmpeg to use this script"
 else
     NR=1

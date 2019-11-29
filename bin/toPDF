@@ -1,5 +1,5 @@
 #!/bin/bash
-if [[ $(which ebook-convert | awk '{print $2}') == "not" ]] ; then
+if [[ $(command -v ebook-convert) != "" ]] ; then
     echo "You need to install calibre(which contains the ebook-convert program)"
 else
     for i in "$@" ; do

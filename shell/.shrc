@@ -31,7 +31,7 @@ if [[ -z $__LOCAL_BIN_IN_PATH ]] ; then
     export PATH="$PATH:$HOME/.local/bin"
 fi
 
-if   [[ $(which most | awk '{print $2}') != "not" ]] ; then
+if   [[ $(command -v most != "") ]] ; then
     export PAGER="most"
 fi
 
@@ -39,9 +39,9 @@ export EDITOR="nano"
 
 if [[ $TERM != *screen* ]] ; then
     COMMAND=""
-    if   [[ $(which tmux | awk '{print $2}') != "not" ]] ; then
+    if   [[ $(command -v tmux != "") ]] ; then
         COMMAND="tmux";
-    elif [[ $(which screen | awk '{print $2}') != "not" ]] ; then
+    elif [[ $(command -v screen != "") ]] ; then
         COMMAND="screen";
     fi
 

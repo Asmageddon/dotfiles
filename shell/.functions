@@ -9,16 +9,16 @@ mkcd() {
 #Install a package
 i() {
     local COMMAND=""
-    if [[ $(which apt-get | wc -l) == "1" ]]; then
+    if [[ $(command -v apt-get != "") ]]; then
         COMMAND="apt-get install "
     else
         echo "No package manager I know installed, exiting"
         return 0
     fi
     if [[ "$UID" != 0 ]]; then
-        if [[ $(which sudo | wc -l) == "1" ]]; then
+        if [[ $(command -v sudo != "") ]]; then
             COMMAND="sudo "$COMMAND;
-        elif [[ $(which su | wc -l) == "1" ]]; then
+        elif [[ $(command -v su != "") ]]; then
             echo "You don't have sudo installed, using su; Type root password to continue";
             COMMAND="su -c \""$COMMAND:"\"";
         else
@@ -32,16 +32,16 @@ i() {
 #Uninstall a package
 ui() {
     local COMMAND=""
-    if [[ $(which apt-get | wc -l) == "1" ]]; then
+    if [[ $(command -v apt-get != "") ]]; then
         COMMAND="apt-get remove "
     else
         echo "No package manager I know installed, exiting"
         return 0
     fi
     if [ "$UID" != 0 ]; then
-        if [[ $(which sudo | wc -l) == "1" ]]; then
+        if [[ $(command -v sudo != "") ]]; then
             COMMAND="sudo "$COMMAND;
-        elif [[ $(which su | wc -l) == "1" ]]; then
+        elif [[ $(command -v su != "") ]]; then
             echo "You don't have sudo installed, using su; Type root password to continue";
             COMMAND="su -c \""$COMMAND:"\"";
         else
@@ -55,7 +55,7 @@ ui() {
 #Find a package
 fp() {
     local COMMAND=""
-    if [[ $(which apt-cache | wc -l) == "1" ]]; then
+    if [[ $(command -v apt-cache != "") ]]; then
         COMMAND="apt-cache search "
     else
         echo "No package manager I know installed, exiting"
@@ -280,7 +280,7 @@ launch() {
 }
 
 run() {
-    # TODO: Check if the command is available with which and PWD file check
+    # TODO: Check if the command is available with command -v and PWD file check
     if ! pgrep -f $1 ; then
         echo "Launching: '$@'"
         launch $@
