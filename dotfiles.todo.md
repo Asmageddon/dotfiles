@@ -30,6 +30,22 @@
 
 # TODO: Syncing of: Clementine DB. libpurple logs.
 
+# Compton manpage:
+#        --glx-fshader-win SHADER
+#           GLX backend: Use specified GLSL fragment shader for rendering window contents. See
+#           compton-default-fshader-win.glsl and compton-fake-transparency-fshader-win.glsl in the
+#           source tree for examples.
+#		 --force-win-blend - if it ever makes opaque pixels transparent
+
+# TODO: Find or make mcomix AppImage - consider doing this for more stable-for-a-long-time programs :0
+
+# TODO/Research: Is software corrections for a display's poor gray-to-gray possible?
+
+# TODO: Set shell (possibly query)
+# TODO: dialog/whiplash logout/session dialog
+
+# TODO: Find out what package (if any) provides "/bin/$NAME" or "/usr/bin/local/$NAME"
+# TODO: Calibrate color balance
 
 
 Try out other WMs and DEs - any super scriptable ones?
@@ -49,10 +65,10 @@ rm, mv, cp with history - what about hooking?
 # i-nex kinfocenter                                  # CPU info, detailed(not in repos?). KDE's hw info
 
 # Development
-    python3 ipython3 python3-pip python3-setuptools python3-tk python3-wxgtk4.0 luajit luarocks
-    urxvt tmux zsh xsel                                  # terminal stack
+    
+    rxvt-unicode tmux zsh xsel                                  # terminal stack
     ack most lsof htop joe source-highlight colordiff    # terminal utils
-    dhex ghex
+    
 
 # Management
     stress-ng lm-sensors hddtemp                         # Stress testing, temperature, HDD temperature
@@ -60,22 +76,23 @@ rm, mv, cp with history - what about hooking?
     net-tools                                            # contains netstat
     exfat-fuse exfat-utils ntfs-3g                       # filesystep support
 # unlikely to be missing but hey:
-    gksu wget
+    wget
 # Development
-    git make automake cmake build-essentials
+    git make automake cmake build-essential
+    python3 ipython3 python3-pip python3-setuptools python3-tk python3-wxgtk4.0 luajit luarocks
+    dhex ghex
 # Desktop programs:
     file-roller unrar-free furiusisomount brasero
     volti flameshot xfce4-clipman redshift-gtk suckless-tools # suckless contains dmenu_run - I seek to replace it
-    geany geany-plugin-*
+    geany geany-plugins
     pidgin pidgin-plugin-pack
     calibre imagemagick
     baobab sqlitebrowser
     qbittorrent
 
-    firefox-esr tor torbrowser-launcher
-    pcmanfm ristretto mcomix atril clementine
+    firefox tor torbrowser-launcher
+    pcmanfm ristretto atril clementine
     gimp krita libreoffice
-    wine
 
 dialog whiptail
 sudo add-apt-repository ppa:bartbes/love-stable && sudo apt-get update sudo apt-get install love

@@ -51,7 +51,7 @@ symlink() {
         else
             echo "Backing up $2 into $3";
             mv "$2" "$3";
-            echo "$1 -> $2";
+            echo "    $1 -> $2";
             ln -s "$1" "$2";
         fi
     else
