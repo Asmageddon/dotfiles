@@ -93,6 +93,9 @@ rm, mv, cp with history - what about hooking?
     firefox tor torbrowser-launcher
     pcmanfm ristretto atril clementine
     gimp krita libreoffice
+# Keybindings
+	sxhkd xbindkeys # sxhkd has more features and is thus preferable
+
 
 dialog whiptail
 sudo add-apt-repository ppa:bartbes/love-stable && sudo apt-get update sudo apt-get install love

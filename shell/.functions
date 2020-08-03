@@ -279,9 +279,14 @@ launch() {
     setsid $@ >/dev/null 2>&1 < /dev/null &
 }
 
+bpgrep() {
+  ps -eo pid,args | grep "$@" | grep -v "^\s*[0-9]*\s*grep"
+}
+
 run() {
     # TODO: Check if the command is available with command -v and PWD file check
-    if ! pgrep -f $1 ; then
+    # bpgrep $1
+    if [[ "$(bpgrep $1)" == "" ]] ; then
         echo "Launching: '$@'"
         launch $@
     else

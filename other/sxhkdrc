@@ -1,0 +1,8 @@
+super + {e,x}
+	{pcmanfm,urxvt}
+	
+Print
+	flameshot gui -d 150
+
+super + c
+	rofi -show combi -combi-modi drun,run,window -location 1 -width 100 -columns 3 -dpi 72 -terminal urxvt

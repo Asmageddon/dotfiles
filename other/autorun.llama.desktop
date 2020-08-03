@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Name=Autorun Launcher
+Comment=Llama's Autorun
+Exec=sh -e -c "exec \\"$(cat ~/.dotfilesrc)/autorun.sh\\""
+Icon=appointment-soon
+StartupNotify=false
+Terminal=false
+Hidden=true

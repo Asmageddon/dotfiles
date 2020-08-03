@@ -4,8 +4,13 @@ launch() {
     setsid $@ >/dev/null 2>&1 < /dev/null &
 }
 
+bpgrep() {
+  ps -eo pid,args | grep "$@" | grep -v "^\s*[0-9]*\s*grep"
+}
+
 run() {
-  if ! pgrep -f $1 ; then
+  # bpgrep $1
+  if [[ "$(bpgrep $1)" == "" ]] ; then
     echo "Launching: '$@'"
     launch $@
   else
@@ -13,8 +18,11 @@ run() {
   fi
 }
 
-run compton --unredir-if-possible --backend glx --vsync opengl-swc
+# run compton --unredir-if-possible --backend glx --vsync opengl-swc
 # Might need: --xrender-sync and --xrender-sync-fence
+
+run sxhkd
+pkill -SIGUSR1 sxhkd
 
 run dropbox start -i
 run flameshot
