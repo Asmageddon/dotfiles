@@ -8,4 +8,4 @@ Exec=sh -e -c "exec \\"$(cat ~/.dotfilesrc)/autorun.sh\\""
 Icon=appointment-soon
 StartupNotify=false
 Terminal=false
-Hidden=true
+Hidden=false

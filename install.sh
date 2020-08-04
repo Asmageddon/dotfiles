@@ -136,10 +136,12 @@ install_files "other/python" ".pythonrc" "" ""
 # X.Org files - locale, themes, fonts
 install_files "xorg" "" "" ""
 
-AUTOSTART_DIR="$HOME/.config/autostart"
-if [[ "$XDG_CONFIG_HOME" != "" ]] ; then
-    AUTOSTART_DIR="$XDG_CONFIG_HOME/autostart"
-fi
+AUTOSTART_DIR=".config/autostart"
+# This would require expanding the install_files fn to handle absolute paths too
+#if [[ "$XDG_CONFIG_HOME" != "" ]] ; then
+#    AUTOSTART_DIR="$XDG_CONFIG_HOME/autostart"
+#fi
 
+echo "Autostart directory: $AUTOSTART_DIR"
 # The desktop autorun
 install_files "other" "autorun.llama.desktop" "$AUTOSTART_DIR" ""
