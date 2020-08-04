@@ -1,0 +1,16 @@
+#!/bin/bash
+
+SCREENSHOT_DIR="$HOME/Pictures/screenshots"
+
+if [[ $(command -v scrot) != "" ]] ; then
+    notify-send "Okay"
+    CMDS='nice -n 20 optipng "$f"'
+    CMDS=$CMDS';mv "$f" "'$SCREENSHOT_DIR'"'
+
+    notify-send $CMDS
+
+    scrot --focused 'window %Y.%m.%d @ %H:%M:%S ($wx$h).png' -e "$CMDS"
+    notify-send "Screenshot saved to $SCREENSHOT_DIR"
+else
+    notify-send "Please install 'scrot' to use this function"
+fi

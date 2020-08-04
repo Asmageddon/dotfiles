@@ -70,7 +70,7 @@ symlink() {
     if [[ -f "$2" ]] ; then
         if [[ $(readlink "$2") == "$1" ]] ; then
             return;
-        else if [[ "$3" != "" ]] ; then
+        elif [[ "$3" != "" ]] ; then
             prompt_yn "    Back up and replace '$2'?" yn
 
             if [[ $yn == "" ]] ; then
@@ -81,7 +81,7 @@ symlink() {
                 echo "    LINK: $1 -> $2";
                 ln -s "$1" "$2";
             fi
-        fi fi
+        fi
     else
         echo "    LINK: $1 -> $2 $BAK";
         ln -s "$1" "$2";

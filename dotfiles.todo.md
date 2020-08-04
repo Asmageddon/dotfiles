@@ -50,7 +50,10 @@
 # TODO: dialog/whiplash logout/session dialog
 
 # TODO: Find out what package (if any) provides "/bin/$NAME" or "/usr/bin/local/$NAME"
+#       On apt systems, apt-file find
 # TODO: Calibrate color balance
+
+# TODO: Consider moving .xinit contents to .xprofile and/or .xsession
 
 # NOTE: ${@:2}; can be used to use arguments from position 2 onward
 

@@ -155,6 +155,26 @@ cless() {
     fi
 }
 
+# Nicked from someone else, TODO: Dissect this bash wizardry
+archive() {
+    local format="$1"
+    local output="$2"
+    local input=( "${@:3}" )
+    case "$format" in
+        gz )
+            tar -czvf "${output}.tar.gz" "${input[@]}";;
+        7z )
+            7za a "${output}.7z" "${input[@]}";;
+        zip )
+            zip -r "${output}.zip" "${input[@]}" ;;
+    esac
+}
+
+swap() {
+    local TMPFILE=tmp.$$
+    mv "$1" $TMPFILE && mv "$2" "$1" && mv $TMPFILE "$2"
+}
+
 zipdirs() {
     ls -1 --color=never | awk '{print "zip -r \"" $0 ".zip\" \"" $0 "\""}' | sh
 }
