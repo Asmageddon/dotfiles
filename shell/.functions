@@ -308,6 +308,18 @@ nummouse() {
     echo "Press Shift+NumLock to control the mouse cursor with the numpad"
 }
 
+# prompt_yn "Prompt text?" return_variable
+prompt_yn() {
+    while true; do
+        read -r -n1 -p "$1 [y/n] " yn
+        case $yn in
+            [Yy]* ) echo; eval "$2=1";  break;;
+            [Nn]* ) echo; eval "$2=\"\""; break;;
+            * ) echo "Please input Y or N";;
+        esac
+    done
+}
+
 mkqr() {
     echo "1: $1"
     if [[ "$2" != "" ]] ; then
