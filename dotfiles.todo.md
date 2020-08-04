@@ -11,6 +11,11 @@
 #       kazam, slop(maim)
 # Also check out: dzen2, xmobar, lemonbar
 
+# TODO: My dotfiles, use a pipe file for stuff like tmux bar, check for its existence
+#       Do keyboard shortcuts through something universal(what was that X11 shortcut thingy I tried to use for speedhack? Check Erlend chat)
+#       Figure out which other states the prompt update crashes(happens most often in real TTY)
+
+
 # In likelihood of ll-net, create similar utility for disk, cpu, memory, processes, etc. - just overall monitoring
 #       cat /proc/stat | head -n 1 -> sum(columns 1,2,3,6,7,9,10) / sum(all columns)
 
@@ -47,6 +52,10 @@
 # TODO: Find out what package (if any) provides "/bin/$NAME" or "/usr/bin/local/$NAME"
 # TODO: Calibrate color balance
 
+# NOTE: ${@:2}; can be used to use arguments from position 2 onward
+
+# Look up: How to use command line or IPC for switching workspaces etc. ideally also launch programs DE-agnostic
+
 
 Try out other WMs and DEs - any super scriptable ones?
 Actual timeout, but only if tmux isn't attached. Or, can I catch the parent terminal emulator being closed?
@@ -65,10 +74,10 @@ rm, mv, cp with history - what about hooking?
 # i-nex kinfocenter                                  # CPU info, detailed(not in repos?). KDE's hw info
 
 # Development
-    
+
     rxvt-unicode tmux zsh xsel                                  # terminal stack
     ack most lsof htop joe source-highlight colordiff    # terminal utils
-    
+
 
 # Management
     stress-ng lm-sensors hddtemp                         # Stress testing, temperature, HDD temperature
@@ -83,7 +92,8 @@ rm, mv, cp with history - what about hooking?
     dhex ghex
 # Desktop programs:
     file-roller unrar-free furiusisomount brasero
-    volti flameshot xfce4-clipman redshift-gtk suckless-tools # suckless contains dmenu_run - I seek to replace it
+    volti flameshot xfce4-clipman redshift-gtk
+    rofi # replaces dmenu_run from suckless-tools
     geany geany-plugins
     pidgin pidgin-plugin-pack
     calibre imagemagick

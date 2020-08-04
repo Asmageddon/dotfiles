@@ -8,7 +8,8 @@ alias lsd='find -L . -maxdepth 1 -type d -print0 | sed s:\./::g | xargs -0r ls -
 alias ping='ping -c 5'
 alias rm='rm -I'
 alias x='exit'
-alias ssh='ssh -CX'
+
+alias sshx='ssh -CX'
 
 alias less='less -R'
 
@@ -27,3 +28,5 @@ fi
 alias xev-kb="xev | grep -A2 --line-buffered '^KeyRelease' | sed -n '/keycode /s/^.*keycode \([0-9]*\).* (.*, \(.*\)).*$/\1 \2/p'"
 
 alias randdir='python -c "import random, os; print(random.choice(os.listdir(\".\")))"'
+
+alias my-rofi="rofi -location 1 -terminal urxvt -modi run,window,combi -show combi -combi-modi drun,run,window -columns 3 -width 100 -dpi 72"

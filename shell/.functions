@@ -300,3 +300,23 @@ brightness() {
 }
 
 function join_by { local d=$1; shift; echo -n "$1"; shift; printf "%s" "${@/#/$d}"; }
+
+# WIP: Use xkb to configure this better (5 as LMB always, 0 as RMB, Plus/Minus as scrollwheel)
+nummouse() {
+    # Note: If I ever feel like it or need to, configuring info on: https://wiki.archlinux.org/index.php/X_keyboard_extension#Mouse_control
+    setxkbmap -option keypad:pointerkeys
+    echo "Press Shift+NumLock to control the mouse cursor with the numpad"
+}
+
+mkqr() {
+    echo "1: $1"
+    if [[ "$2" != "" ]] ; then
+        echo "2: $2"
+    fi
+    qrencode -m 2 -s 4 -o ~/.tmp/qrcode.png "$1"
+
+    # convert ~/.tmp/qrcode.png
+
+    feh ~/.tmp/qrcode.png
+}
+

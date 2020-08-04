@@ -50,25 +50,40 @@ if [[ ! -d "$HOME/.local/bin" ]] ; then
     mkdir -p "$HOME/.local/bin"
 fi
 
+# prompt_yn "Prompt text?" return_variable
+prompt_yn() {
+    while true; do
+        read -r -n1 -p "$1 [y/n] " yn
+        case $yn in
+            [Yy]* ) echo; eval "$2=1";  break;;
+            [Nn]* ) echo; eval "$2=\"\""; break;;
+            * ) echo "Please input Y or N";;
+        esac
+    done
+}
+
 #Work the magic
 symlink() {
     # $1 - source file
     # $2 - target file
     # $3 - backup directory
-    local BAK="(no backup)"
     if [[ -f "$2" ]] ; then
         if [[ $(readlink "$2") == "$1" ]] ; then
             return;
         else if [[ "$3" != "" ]] ; then
-                #echo "Backing up $2 into $3";
+            prompt_yn "    Back up and replace '$2'?" yn
+
+            if [[ $yn == "" ]] ; then
+                echo "    SKIP: $2";
+            else
+                echo "  BACKUP: $2 into $3";
                 mv "$2" "$3";
-                #echo "    $1 -> $2";
+                echo "    LINK: $1 -> $2";
                 ln -s "$1" "$2";
-                BAK="(backup in $3)"
-            fi 
-        fi
+            fi
+        fi fi
     else
-        echo "  $1 -> $2 $BAK";
+        echo "    LINK: $1 -> $2 $BAK";
         ln -s "$1" "$2";
     fi
 
@@ -128,6 +143,7 @@ install_files "other/geany-themes" "" ".config/geany/colorschemes" "geany-themes
 # Other config files
 install_files "other" "redshift.conf" ".config" ""
 install_files "other" "sxhkdrc" ".config/sxhkd" ""
+install_files "other/rofi" "config" ".config/rofi"
 
 # Python stuff
 install_files "other/python" ".pythonrc" "" ""
@@ -142,6 +158,5 @@ AUTOSTART_DIR=".config/autostart"
 #    AUTOSTART_DIR="$XDG_CONFIG_HOME/autostart"
 #fi
 
-echo "Autostart directory: $AUTOSTART_DIR"
 # The desktop autorun
 install_files "other" "autorun.llama.desktop" "$AUTOSTART_DIR" ""
