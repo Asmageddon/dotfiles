@@ -67,6 +67,15 @@ llnet_ping() {
     fi
 }
 
+llnet_help() {
+    echo "llnet <command> [option]"
+    echo "    llnet interface - Display the interface being used to connect to the internet"
+    echo "    llnet upspeed [interface] - Sample upload speed in kB over 1s and display. Optionally for a specific interface"
+    echo "    llnet downspeed [interface] - Sample download speed in kB over 1s and display. Optionally for a specific interface"
+    echo "    llnet speed [interface] - Sample download and upload speed in kB over 1s and display. Optionally for a specific interface"
+    echo "    llnet ping [ip] - Ping 8.8.8.8 or given IP address and display latency as a float"
+}
+
 if [[ $1 == "interface" ]] ; then
     llnet_interface
 elif [[ $1 == "upspeed" ]] ; then
@@ -77,4 +86,6 @@ elif [[ $1 == "speed" ]] ; then
     llnet_speed $2
 elif [[ $1 == "ping" ]] ; then
     llnet_ping $2
+else
+    llnet_help $2
 fi
