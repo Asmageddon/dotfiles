@@ -69,7 +69,8 @@ calculate() {
 
 # TODO: Kill other tmux_network_usage processes instead
 #Do not launch multiple copies
-if [[ $(count_process tmux_network_usage) < 5 ]] ; then
+SCRIPT_NAME="$(basename "$0")";
+if [[ $(count_process $SCRIPT_NAME) < 2 ]] ; then
     tmux setenv -g TMUX_UPSPEED "0"
     tmux setenv -g TMUX_DOWNSPEED "0"
     update_ping 8.8.8.8 &

@@ -30,7 +30,6 @@ run() {
 # Might need: --xrender-sync and --xrender-sync-fence
 
 run sxhkd
-pkill -SIGUSR1 sxhkd
 
 run dropbox start -i
 run flameshot
