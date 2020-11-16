@@ -129,7 +129,7 @@ echo "$DIR" > "$INSTALL_DIR/.dotfilesrc"
 install_files "shell" ".bashrc .zshrc .bash_profile" "" "" # TODO: Store .dotfilesrc containing path to dotfiles folder
 
 # Miscellanous files
-install_files "" ".tmux.conf .conkyrc .gitconfig" "" "" # No yaourtrc as I'm not using Arch
+install_files "" ".tmux.conf .gitconfig" "" "" # No yaourtrc as I'm not using Arch
 
 
 # Scripts
@@ -144,6 +144,8 @@ install_files "other/geany-themes" "" ".config/geany/colorschemes" "geany-themes
 install_files "other" "redshift.conf" ".config" ""
 install_files "other" "sxhkdrc" ".config/sxhkd" ""
 install_files "other/rofi" "config" ".config/rofi"
+
+install_files "other/conky" "conky.conf conky_script.lua .toprc" ".config/conky"
 
 # Python stuff
 install_files "other/python" ".pythonrc" "" ""
