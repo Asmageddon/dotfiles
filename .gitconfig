@@ -1,14 +1,19 @@
+[include]
+    # For username / creds / etc
+    path = $HOME/.gitconfig.local
+[diff]
+    renames = true
+    renameLimit = 2000
+    noprefix = true # drops the annoying a/filename.foo b/filename.foo prefixes
+[color]
+    ui = true
+    branch = true
+    diff = true
+[format]
+    pretty = %C(YELLOW)%h %Creset%s (%C(CYAN)%cn %C(RED)%cr%Creset)
+[push]
+    default = current
+    # Idk what previous value of "upstream" meant
 [user]
 	name = Asmageddon
-	email = Asmageddon@gmail.com
-[github]
-	user = asmageddon
-	token = 3201830280dd977556eb906ba2614e93
-[color]
-	ui = true
-	branch = true
-	diff = true
-[format]
-	pretty = %C(YELLOW)%h %Creset%s (%C(CYAN)%cn %C(RED)%cr%Creset)
-[push]
-	default = upstream
+	email = asmageddon@gmail.com
