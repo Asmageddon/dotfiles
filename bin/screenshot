@@ -15,4 +15,6 @@ elif [[ $(command -v scrot) != "" ]] ; then
     CMDS=$CMDS';mv "$f" ~/Pictures/screenshots'
 
     scrot '%Y.%m.%d @ %H:%M:%S ($wx$h).png' -e "$CMDS"
+else
+    echo "You need to install either flameshot or scrot to use this script"
 fi
