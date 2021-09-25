@@ -1,0 +1,78 @@
+#!/bin/bash
+
+# Input            =  165.7MiB
+# pdftoppm -r 150  -> 364.9MiB ( )
+# crushed          -> 295.5MiB
+# img2pdf          -> 294.2MiB
+
+# NOTE: GIMP can produce smaller *and* higher quality PNGs than pdftoppm
+
+echo "Script not finished"
+exit
+
+if [[ $(command -v notify-send) != "" ]] ; then HAS_NOTIFY="true"; fi
+notify() { echo $@ > /dev/tty; } # This prints twice in my zsh for some reason because of my preexec function
+
+prompt_yn() {
+    while true; do
+        read -r -n1 -p "$1 [y/n] " yn
+        case $yn in
+            [Yy]* ) echo; eval "$2=1";  break;;
+            [Nn]* ) echo; eval "$2=\"\""; break;;
+            * ) echo "Please input Y or N";;
+        esac
+    done
+}
+
+# Usage: if [[ $(require program_a program_b program_c) == "" ]] ; then ... fi
+require() {
+    local ALL_FOUND="yes"
+    {
+        for program in $@ ; do
+            if [[ $(command -v $program) == "" ]] ; then
+                echo "You need the '$program' command installed"; ALL_FOUND=""
+            fi
+        done
+    } > /dev/tty
+    echo $ALL_FOUND
+}
+
+suggest() {
+    for program in $@ ; do
+        if [[ $(command -v $program) == "" ]] ; then
+            echo "It's recommended to install the '$program' command"
+        fi
+    done
+}
+
+if [[ $(require mktemp pdftoppm img2pdf) != "" ]] ; then
+    echo "Necessary command(s) not found, terminating script"; exit 1
+fi
+suggest pngcrush
+
+# Create temporary directory
+INPUT_FILE="$1"
+FILENAME_NO_EXT="${INPUT_FILE%.*}"
+DENSITY="$2"
+if [[ $QUALITY == "" ]] ; then DENSITY=150; fi
+
+TDIR=$(mktemp -d --tmpdir pdfbaking.XXXXXX)
+pdftoppm -r "$DENSITY" -png "$INPUT_FILE" -cropbox "$TDIR/page"
+
+for file in "$TDIR"/*.png; do
+    pngcrush "$file" "$TDIR/crushed.png"
+    mv "$TDIR/crushed.png" "$file"
+done
+
+img2pdf -o "$FILENAME_NO_EXT.prerendered.$DENSITY.pdf" "$TDIR/"*.png
+
+rmdir -r "$TDIR"
+
+# convert -verbose -density 150 -trim input.pdf -quality 100 -flatten output.jpg
+# -sharpen 0x1.0
+# -colors 256 -depth 8
+# -adaptive-resize 900x9999
+
+# Optional possibility, compress images to JPEG:
+# This could probably compress the whole thing in one go, too
+# gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/default -dNOPAUSE -dQUIET -dBATCH -dDetectDuplicateImages -dCompressFonts=true -r150 -sOutputFile=output.pdf convertoutput.pdf
