@@ -19,6 +19,8 @@ LL_12H_TIME=0
 # free -m | awk '/Mem/ {printf "RAM: %.1f%%", (100*($2-$7) / $2)} /Swap/ {printf " SWP: %.1f%%", (100* $3 / $2)}'
 # free -m | awk '/Mem/ {printf "Free: %.1f+", ($7 / 1024)} /Swap/ {printf "%.1f GiB", ($4/1024)}'
 
+PAGER="less -R"
+
 source $DOTFILES_DIR/shell/.shvars
 source $DOTFILES_DIR/shell/.aliases
 source $DOTFILES_DIR/shell/.functions
@@ -29,10 +31,6 @@ HISTTIMEFORMAT='%y.%m.%d %T  '
 if [[ -z $__LOCAL_BIN_IN_PATH ]] ; then
     export __LOCAL_BIN_IN_PATH="TRUE"
     export PATH="$PATH:$HOME/.local/bin"
-fi
-
-if   [[ $(command -v most != "") ]] ; then
-    export PAGER="most"
 fi
 
 export EDITOR="nano"

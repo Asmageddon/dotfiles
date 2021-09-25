@@ -166,3 +166,6 @@ except:
 def reloadrc():
     execfile("~/.pythonrc", globals())
 rerc = reloadrc
+
+print("\n[NOTICE] Imported: re, random, math, time, pprint, defaultdict, sys, os, atexit")
+print("\n[NOTICE] Defined: unicat, expandUnicodeCategory, flip, uniq_c, bayesian_average, movavg")

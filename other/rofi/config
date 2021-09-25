@@ -6,6 +6,7 @@ configuration {
 	terminal: "urxvt";
 	combi-modi: "drun,run,window";
 	dpi: 72;
+	pid: "/run/user/1000/rofi.pid";
 /*	lines: 15;*/
 /*	font: "mono 12";*/
 /*	bw: 1;*/
@@ -57,7 +58,6 @@ configuration {
 /*	color-window: ;*/
 /*	max-history-size: 25;*/
 /*	combi-hide-mode-prefix: false;*/
-/*	pid: "/run/user/1000/rofi.pid";*/
 /*	display-window: ;*/
 /*	display-windowcd: ;*/
 /*	display-run: ;*/
