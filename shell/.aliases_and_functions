@@ -1,0 +1,317 @@
+
+# Aliases
+
+alias grep='grep --color=auto'
+alias ls='ls -Ah --color=force'
+
+alias lsf='find -L . -maxdepth 1 -type f -print0 | sed s:\./::g | xargs -0r ls -Ah --color=force'
+alias lsd='find -L . -maxdepth 1 -type d -print0 | sed s:\./::g | xargs -0r ls -d -Ah --color=force'
+
+#Let's leave dir raw
+alias ping='ping -c 5'
+alias rm='rm -I'
+alias x='exit'
+
+alias sshx='ssh -CX'
+
+alias less='less -Rg'
+
+alias servedir='python -m SimpleHTTPServer 9321'
+
+alias mplayer='mplayer -ass -embeddedfonts -ass-line-spacing 0 -vo xv -dr -sub-fuzziness 1 -alang eng -af-add volnorm >/dev/null -framedrop'
+
+alias lss='ls -lctr' # Long listing format, sort by modification time, reverse sort(latest first), by modification time
+
+if [[ $SHELL_CHECK == "zsh" ]] ; then
+    alias reload='source ~/.zshrc';
+elif [[ $SHELL_CHECK == "bash" ]] ; then
+    alias reload='source ~/.bashrc';
+fi
+
+alias xev-kb="xev | grep -A2 --line-buffered '^KeyRelease' | sed -n '/keycode /s/^.*keycode \([0-9]*\).* (.*, \(.*\)).*$/\1 \2/p'"
+
+alias randdir='python -c "import random, os; print(random.choice(os.listdir(\".\")))"'
+
+alias my-rofi="rofi -location 1 -terminal urxvt -modi run,window,combi -show combi -combi-modi drun,run,window -columns 3 -width 100 -dpi 72"
+
+alias tempdir="mktemp -d --tmpdir"
+
+alias find2="find -mindepth 2 -maxdepth 2 -type f"
+alias find3="find -mindepth 3 -maxdepth 3 -type f"
+alias find4="find -mindepth 4 -maxdepth 4 -type f"
+
+alias wgetr="wget -r -np"
+
+alias wusb="watch lsusb"
+alias wblk="watch lsblk"
+alias reset="reload; reset"
+
+alias colortest="msgcat --color=test | head -n 11"
+alias colortest2='for x in 0 1; do for i in 30 31 32 33 34 35 36 37; do for a in 40 41 42 43 44 45 46 47; do echo -ne "\e[$x;$i;$a""m$x;$i;$a""\e[0;37;40m "; done; echo; done; done; echo ""'
+alias colortest-full='for x in 0 1 2 3 4 5 6 7 8; do for i in 30 31 32 33 34 35 36 37; do for a in 40 41 42 43 44 45 46 47; do echo -ne "\e[$x;$i;$a""m$x;$i;$a""\e[0;37;40m "; done; echo; done; done; echo ""'
+
+# Functions
+
+mkcd() {
+    mkdir -p "$1" && cd "$1";
+}
+
+# TODO: Fix black color(substitute?)
+cless() {
+    HIGHLIGHTED_TEXT=$(source-highlight -f esc -i $1)
+    if [[ "$?" == "0" ]] ; then
+        echo "$HIGHLIGHTED_TEXT" | less -R
+    else
+        less $1
+    fi
+}
+
+# Nicked from someone else, TODO: Dissect this bash wizardry
+archive() {
+    local format="$1"
+    local output="$2"
+    local input=( "${@:3}" )
+    case "$format" in
+        gz )
+            tar -czvf "${output}.tar.gz" "${input[@]}";;
+        7z )
+            7za a "${output}.7z" "${input[@]}";;
+        zip )
+            zip -r "${output}.zip" "${input[@]}" ;;
+    esac
+}
+
+# Lifted from: https://serverfault.com/a/3847
+extract () { # extract files. Ignore files with improper extensions.
+    local x
+    ee() { # echo and execute
+        echo "$@"
+        $1 "$2"
+    }
+    for x in "$@"; do
+        [[ -f $x ]] || continue
+        case "$x" in
+            *.tar.bz2 | *.tbz2 )    ee "tar xvjf" "$x"  ;;
+            *.tar.gz | *.tgz ) ee "tar xvzf" "$x"   ;;
+            *.bz2 )             ee "bunzip2" "$x"   ;;
+            *.rar )             ee "unrar x" "$x"   ;;
+            *.gz )              ee "gunzip" "$x"    ;;
+            *.tar )             ee "tar xvf" "$x"   ;;
+            *.zip )             ee "unzip" "$x"     ;;
+            *.Z )               ee "uncompress" "$x" ;;
+            *.7z )              ee "7z x" "$x"      ;;
+        esac
+    done
+}
+
+swap() {
+    local TMPFILE=tmp.$$
+    mv "$1" $TMPFILE && mv "$2" "$1" && mv $TMPFILE "$2"
+}
+
+zipdirs() {
+    ls -1 --color=never | awk '{print "zip -r \"" $0 ".zip\" \"" $0 "\""}' | sh
+}
+
+pause() {
+    for pname in $@ ; do
+        pkill -SIGSTOP $pname;
+    done
+}
+
+resume() {
+    for pname in "$@" ; do
+        pkill -SIGCONT $pname
+    done
+}
+
+toggle() {
+    local STATE=""
+    local PID_LIST=""
+    local i=0
+    for pname in "$@" ; do
+        for pid in $(ps -eo pid,comm | grep "$pname" | grep -v "defunct" | awk '{print $1}') ; do
+            #echo $pname":"$pid
+            PID_LIST="$PID_LIST$pname:$pid "
+        done
+    done
+    for pid_name in $(echo $PID_LIST) ; do
+        local PNAME=$(echo $pid_name | awk -F: '{print $1}')
+        local PID=$(echo $pid_name | awk -F: '{print $2}')
+
+        if [[ $PID != "" ]] ; then
+            if [[ $STATE == "" ]] ; then
+                STATE=$(cat /proc/$PID/status | grep "State:" | awk '{print $2}')
+            fi
+
+            local RETCODE=0
+
+            #T for paused, R for running
+            if [[ $STATE == "T" ]] ; then
+                kill -SIGCONT $PID
+                RETCODE="$?"
+                echo -n "Resuming "$C_YELLOW"$pid_name"
+            else
+                kill -SIGSTOP $PID
+                RETCODE="$?"
+                echo -n "Pausing "$C_CYAN"$pid_name"
+            fi
+            if [[ $RETCODE != 0 ]] ; then
+                echo $C_NONE" ["$E_BOLD$C_RED"Failure"$C_NONE"]"
+            else
+                echo $C_NONE" ["$E_BOLD$C_GREEN"Success"$C_NONE"]"
+            fi
+        fi
+    done
+}
+
+new_session() {
+    DNUM=`echo $DISPLAY | sed 's/\..*$//'`
+    echo reserve > /var/run/xdmctl/xdmctl-$DNUM
+}
+
+url_encode() {
+    echo $1 | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g; s/'"'"'/\&#39;/g'
+}
+
+# TODO: Actually delineate the files
+multiless() { cat "$@" | $PAGER; }
+
+
+# /dev/disk/* # Volumes listed by various shits
+# ls -l /dev/disk/by-label/ #
+# findmnt - filesystem mountpoint structure
+# cat /proc/mounts | grep "/dev/sd" | grep "/media/" # Alternatively, /etc/mtab - for mounts managed by mount/umount
+# lsblk
+# PID = lsof -t /media/volume; ps -q $PID -o pid=,comm= # Warning actually there's likely to be many pids
+
+# Print list of processes using each of the given volumes
+open_in() {
+    for VOLUME in "$@" ; do
+        local DONE=""
+        for PID in $(lsof -t $VOLUME) ; do
+            if [[ $DONE == "" ]] ; then
+                printf "'%s' is in use by: \n" "$VOLUME"
+                DONE="yes"
+            fi
+            ps -q $PID -o pid:6=,user:16=,comm= | awk '{print "    "$0}'
+        done
+    done
+}
+
+# Print list of processes using each of every volume mounted in /media
+volume_use() {
+    #local MOUNTPOINTS=`cat /proc/mounts | grep "/dev/sd" | grep "/media/" | awk '{print $2}'`
+    local MOUNTPOINTS=`awk '/\/media\// { print $2}' /proc/mounts`
+    while read -r vol; do
+        open_in "$(echo -e $vol)"
+    done <<< "$MOUNTPOINTS"
+}
+
+brightness() {
+    local DISPLAY_OUTPUT=$(xrandr -q | grep ' connected' | head -n 1 | cut -d ' ' -f1)
+    xrandr --output "$DISPLAY_OUTPUT" --brightness $1
+}
+
+function join_by { local d=$1; shift; echo -n "$1"; shift; printf "%s" "${@/#/$d}"; }
+
+# TODO: Use xkb to configure this better (5 as LMB always, 0 as RMB, Plus/Minus as scrollwheel)
+nummouse() {
+    # Note: If I ever feel like it or need to, configuring info on: https://wiki.archlinux.org/index.php/X_keyboard_extension#Mouse_control
+    setxkbmap -option keypad:pointerkeys
+    echo "Press Shift+NumLock to control the mouse cursor with the numpad"
+}
+
+# Usage: prompt_yn "Prompt text?" return_variable
+# Sets return_variable to "yes" if yes, empty if no
+prompt_yn() {
+    while true; do
+        read -r -n1 -p "$1 [y/n] " yn
+        case $yn in
+            [Yy]* ) echo; eval "$2=1";  break;;
+            [Nn]* ) echo; eval "$2=\"\""; break;;
+            * ) echo "Please input Y or N";;
+        esac
+    done
+}
+
+mkqr() {
+    echo "1: $1"
+    if [[ "$2" != "" ]] ; then
+        echo "2: $2"
+    fi
+    qrencode -m 2 -s 4 -o ~/.tmp/qrcode.png "$1"
+
+    # convert ~/.tmp/qrcode.png
+
+    feh ~/.tmp/qrcode.png
+}
+
+# ackk [ack params]...
+ackk() {
+    ack --color --group $@ | most
+}
+
+# findf <dir> <file name regexp> <file contents regexp>
+# TODO: Make this work
+# findf() { find "$1" -name "$2" -exec 'grep -H '$3' "{}"' ';' ; }
+
+# addpath <directory>  --  add a directory to $PATH if it exists and isn't already included
+function addpath() {
+    if [ -d  "$1" ] && [[ $PATH != *"$1"* ]]; then
+        export PATH="$PATH:$1"
+    fi
+}
+
+man() {
+    LESS_TERMCAP_md=$'\e[01;31m' \
+    LESS_TERMCAP_me=$'\e[0m' \
+    LESS_TERMCAP_se=$'\e[0m' \
+    LESS_TERMCAP_so=$'\e[01;44;33m' \
+    LESS_TERMCAP_ue=$'\e[0m' \
+    LESS_TERMCAP_us=$'\e[01;32m' \
+    command man "$@"
+}
+
+bindiff() {
+    diff --color=always --minimal <(xxd $1) <(xxd $2) | less -N
+}
+
+
+### Command and process stuff ###
+
+# Launch a program completely detached from the current shell
+launch() {
+    setsid $@ >/dev/null 2>&1 < /dev/null &
+}
+
+alias b="launch"
+
+# Print list of PID, full command line that match query but not grep
+bpgrep() {
+  ps -eo pid,args | grep "$@" | grep -v "^\s*[0-9]*\s*grep"
+}
+
+# Run program if it's not running already
+# TODO: Check if the command is available with command -v and PWD file check
+run() {
+  if [[ "$(bpgrep $1)" == "" ]] ; then
+    echo "Launching: '$@'"
+    launch $@
+  else
+    echo "Already running: '$1' ('$@')"
+  fi
+}
+
+# Usage: $(first-available firefox firefox-esr chromium epiphany) $args
+first-available() {
+    for CHOICE in "$@" ; do
+        if [[ $(command -v $CHOICE) != "" ]] ; then
+            echo $CHOICE; return
+        fi
+    done
+    echo "ERROR_NONE_FOUND"
+}
+
+# TODO: Do something like this but piped through an awk program that colorizes differences
+# diff --minimal --side-by-side <(xxd $1) <(xxd $2) | less -N

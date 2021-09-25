@@ -22,8 +22,7 @@ LL_12H_TIME=0
 PAGER="less -R"
 
 source $DOTFILES_DIR/shell/.shvars
-source $DOTFILES_DIR/shell/.aliases
-source $DOTFILES_DIR/shell/.functions
+source $DOTFILES_DIR/shell/.aliases_and_functions
 
 # For bash
 HISTTIMEFORMAT='%y.%m.%d %T  '
