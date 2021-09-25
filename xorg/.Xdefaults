@@ -1,10 +1,11 @@
 !--< urxvt >--!
-    !--< urxvt:look >--!
+!   --< urxvt:look >--!
         urxvt.font:             xft:DejaVu Sans Mono-10:Book
         urxvt.geometry:         120x32
-        urxvt.background:       black
+        urxvt.depth: 32
+        urxvt.background:       rgba:0000/0000/0200/c000
         urxvt.foreground:       white
-        urxvt.letterSpace:      0
+        urxvt.letterSpace:      -1
         urxvt.cursorBlink:      true
         urxvt.scrollBar:        true
         urxvt.scrollBar_right:  true
@@ -12,18 +13,17 @@
         urxvt.scrollstyle:      plain
         urxvt.colorUL:          6
 
-    !--< urxvt:behavior >--!
+!   --< urxvt:behavior >--!
         urxvt.secondaryScroll:  true
         urxvt.pointerBlank:     true
         urxvt.saveLines:        4000
         urxvt.iso14755:         false
         urxvt.iso14755_52:      false
 
-    urxvt.perl-ext-common:  default,vtwheel,matcher
-
-    !--< urxvt:url >--!
+    urxvt.perl-ext-common:      default,vtwheel,matcher
+!   --< urxvt:url >--!
         urxvt.matcher.button:   1
-        urxvt.urlLauncher:      opera-next
+        urxvt.urlLauncher:      firefox
 
 !--< xterm >--!
     xterm*background:       #000000
@@ -31,3 +31,40 @@
     xterm*colorBD:          #ffffff
     xterm*cursorColor:      #ffffff
 
+! My colors:
+! special
+*.foreground:   #ffffff
+*.background:   #000033
+*.cursorColor:  #ffffff
+
+! black
+*.color0:       #000033
+*.color8:       #595959
+
+! red
+*.color1:       #bf1a00
+*.color9:       #ff401a
+
+! green
+*.color2:       #00b333
+*.color10:      #59ff40
+
+! yellow
+*.color3:       #cca600
+*.color11:      #e6ff59
+
+! blue
+*.color4:       #0d26e6
+*.color12:      #6673ff
+
+! magenta
+*.color5:       #bf00a6
+*.color13:      #e673ff
+
+! cyan
+*.color6:       #00b3d9
+*.color14:      #66ffff
+
+! white
+*.color7:       #d9d9d9
+*.color15:      #ffffff
