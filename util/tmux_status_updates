@@ -1,7 +1,16 @@
 #!/bin/bash
 
 count_process() {
+    echo $(ps -ef | grep "$1$")
     ps -ef | grep "$1$" | wc -l
+}
+
+#Remove the lock directory
+function cleanup {
+    tmux setenv -gu TMUX_STATUS_UPDATES
+    tmux setenv -gu TMUX_UPSPEED
+    tmux setenv -gu TMUX_DOWNSPEED
+    tmux setenv -gu TMUX_PING
 }
 
 update_ping() {
@@ -19,14 +28,8 @@ update_ping() {
             echo $?
             tmux setenv -g TMUX_PING "DOWN";
         else
-            #PING=$(echo $PING | sed -ru 's/.*time=//;s/ms.*/ms/')
-            #PING=$(echo $PING | sed -ru 's/.*time=//;s/\..*/ms/')
-            PING=$(echo $PING | grep "time=" | sed -ru 's/.*time=//;s/ms.*//')
-            #PING=$(echo $PING | sed -ru 's/.*time=([0-9]+).*/\1ms/')
-            #if [[ $(echo $PING | wc -c) > 30 ]] ; then
-                ##PING="DOWN"
-                #PING=$(echo $PING | wc -c)
-            #fi
+            # First substitution expression captures the field, second cuts out 'ms', third cuts out the decimal point
+            PING=$(echo $PING | grep "time=" | sed -ru 's/.*time=//;s/ms.*//;s/\..*//')
             echo $PING > ~/.tmux_ping
             tmux setenv -g TMUX_PING "$PING";
         fi
@@ -67,12 +70,13 @@ calculate() {
     fi
 }
 
-# TODO: Kill other tmux_network_usage processes instead
-#Do not launch multiple copies
-SCRIPT_NAME="$(basename "$0")";
-if [[ $(count_process $SCRIPT_NAME) < 2 ]] ; then
-    tmux setenv -g TMUX_UPSPEED "0"
-    tmux setenv -g TMUX_DOWNSPEED "0"
-    update_ping 8.8.8.8 &
-    calculate
-fi
+# TODO: Store/check script timestamp
+
+PRIOR_PIDS=$(ps -eo pid,args:64 | grep tmux_status_updates | grep -vE "($$|grep)" | awk '{ print $1 }')
+kill $PRIOR_PIDS
+
+trap "cleanup" EXIT
+tmux setenv -g TMUX_UPSPEED "0"
+tmux setenv -g TMUX_DOWNSPEED "0"
+update_ping 8.8.8.8 &
+calculate
